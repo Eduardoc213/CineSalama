@@ -8,3 +8,10 @@ Este repositorio contiene únicamente los modelos Sequelize y la configuración 
 - Archivo de configuración para la conexión a la base de datos.
     - Debe implemetarse las variables de entorno en un archivo .env , esto para ocultar los datos de conexion
 
+
+## Dependencias y paquetes
+
+- npm install dotenv
+- npm install nodemailer
+- npm install jsonwebtoken
+- npm install bcryptjs

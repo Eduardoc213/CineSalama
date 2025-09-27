@@ -19,7 +19,21 @@ require('./app/routes/auth.routes')(app);
 require('./app/routes/usuarios.routes')(app);
 require('./app/routes/promos.routes')(app);
 require('./app/routes/user.routes')(app);
-
+require('./app/routes/snacks.routes')(app);
+require('./app/routes/peliculas.routes')(app);
+require('./app/routes/salas.routes')(app);
+require('./app/routes/asientos.routes')(app);
+require('./app/routes/estrenos.routes')(app);
+require('./app/routes/funciones.routes')(app);
+require('./app/routes/reservas.routes')(app);
+require('./app/routes/ventas.routes')(app);
+require('./app/routes/venta_items.routes')(app);
+require('./app/routes/pagos.routes')(app);
+require('./app/routes/facturas.routes')(app);
+require('./app/routes/catalogo.routes')(app);
+require('./app/routes/historial_puntos.routes')(app);
+require('./app/routes/tarjetas_lealtad.routes')(app);
+require('./app/routes/redemptions.routes')(app);
 
 
 db.sequelize.sync({ force: false })

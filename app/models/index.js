@@ -94,6 +94,7 @@ VentaItem.belongsTo(Funcion, { foreignKey: 'productoId', constraints: false });
 // Exporta todo
 module.exports = {
   sequelize,
+  Sequelize,
   Usuario,
   TarjetaLealtad,
   HistorialPuntos,
