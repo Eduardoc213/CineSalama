@@ -57,3 +57,20 @@ exports.delete = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.findAllAsientosBySala = async (req, res) => {
+  try {
+    const salaId = req.params.id; // Obtenemos el ID de la sala desde la URL
+
+    // Buscamos todos los asientos que pertenezcan a esa sala
+    const asientos = await Asiento.findAll({
+      where: { salaId: salaId }
+    });
+
+    res.json(asientos);
+
+  } catch (err) {
+    console.error('--- ERROR AL BUSCAR ASIENTOS POR SALA ---', err);
+    res.status(500).json({ message: "Error al obtener los asientos de la sala" });
+  }
+};

@@ -7,6 +7,7 @@ module.exports = app => {
   router.get("/:id", controller.findById);
   router.put("/:id", controller.update);
   router.delete("/:id", controller.delete);
-
+  router.get("/:id/asientos", controller.findAllAsientosBySala);
+  
   app.use("/api/salas", router);
 };
