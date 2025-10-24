@@ -6,7 +6,7 @@ const db = require('./app/models');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// Lista segura de orígenes separada por comas (puedes definirla en .env)
+// Lista segura de orígenes separada por comas (puedes definirla en .env) sssss
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3001,http://192.168.0.3:3001')
   .split(',')
   .map((s) => s.trim())
