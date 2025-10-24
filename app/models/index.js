@@ -60,7 +60,7 @@ Funcion.belongsTo(Pelicula, { foreignKey: 'peliculaId' });
 Sala.hasMany(Funcion, { foreignKey: 'salaId' });
 Funcion.belongsTo(Sala, { foreignKey: 'salaId' });
 
-Sala.hasMany(Asiento, { foreignKey: 'salaId' });
+Sala.hasMany(Asiento, { as: 'asientos', foreignKey: 'salaId' });
 Asiento.belongsTo(Sala, { foreignKey: 'salaId' });
 
 // Función y Reserva
