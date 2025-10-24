@@ -12,5 +12,5 @@ module.exports = app => {
 
   router.delete('/:id', ventaItems.delete);
 
-  app.use('/api/venta-items', router);
+  app.use('/api/venta_items', router);
 };

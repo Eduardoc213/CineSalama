@@ -6,7 +6,7 @@ const db = require('./app/models');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// Lista segura de orígenes separada por comas (puedes definirla en .env) esto se puede modificar segun las necesidades
+// Lista segura de orígenes separada por comas (definida en .env) esto se puede modificar segun las necesidades
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3001,http://192.168.0.3:3001')
   .split(',')
   .map((s) => s.trim())
@@ -24,9 +24,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// opcional: responder OPTIONS antes de rutas
-app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -58,11 +55,11 @@ require('./app/routes/redemptions.routes')(app);
 
 db.sequelize.sync({ force: false })
   .then(() => {
-    console.log('Base de datos sincronizada');
+    console.log('✅ Base de datos sincronizada');
     app.listen(PORT, () => {
-      console.log(`Servidor escuchando en puerto ${PORT}`);
+      console.log(`🚀 Servidor escuchando en puerto ${PORT}`);
     });
   })
   .catch(err => {
-    console.error('Error al sincronizar la base de datos:', err);
+    console.error('❌ Error al sincronizar la base de datos:', err);
   });

@@ -20,5 +20,5 @@ module.exports = app => {
   // Eliminar un movimiento de puntos
   //router.delete('/:id', historialPuntos.delete);
 
-  app.use('/api/historial-puntos', router);
+  app.use('/api/historial_puntos', router);
 };

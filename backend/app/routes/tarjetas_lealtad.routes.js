@@ -20,5 +20,5 @@ module.exports = app => {
   // Eliminar tarjeta de lealtad
   router.delete('/:id', tarjetasLealtad.delete);
 
-  app.use('/api/tarjetas-lealtad', router);
+  app.use('/api/tarjetas_lealtad', router);
 };
