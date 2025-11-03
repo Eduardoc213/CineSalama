@@ -1,1 +1,1 @@
-export { default } from './pagina-principal';
+export { default } from './pagina-principal.js';

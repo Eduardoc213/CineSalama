@@ -2,11 +2,11 @@
 require('dotenv').config();
 
 module.exports = {
-  HOST: process.env.DB_HOST,
-  USER: process.env.DB_USER,
-  PASSWORD: process.env.DB_PASSWORD,
-  DB: process.env.DB_NAME,
-  dialect: process.env.DB_DIALECT,
+  HOST: "ep-crimson-fire-adm1sci0-pooler.c-2.us-east-1.aws.neon.tech",
+  USER: "neondb_owner",
+  PASSWORD: "npg_1Qtm7vXqKHJa",
+  DB: "neondb",
+  dialect: "postgres",
   dialectOptions: {
     ssl: {
       require: true,

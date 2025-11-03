@@ -61,7 +61,8 @@ Sala.hasMany(Funcion, { foreignKey: 'salaId' });
 Funcion.belongsTo(Sala, { foreignKey: 'salaId' });
 
 Sala.hasMany(Asiento, { as: 'asientos', foreignKey: 'salaId' });
-Asiento.belongsTo(Sala, { foreignKey: 'salaId' });
+Asiento.belongsTo(Sala, { as: 'sala', foreignKey: 'salaId' });
+
 
 // Función y Reserva
 Funcion.hasMany(Reserva, { foreignKey: 'funcionId' });
