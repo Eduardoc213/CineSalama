@@ -7,20 +7,33 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Lista segura de orígenes separada por comas (definida en .env) esto se puede modificar segun las necesidades
-const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3001,http://192.168.0.3:3001')
+const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,http://192.168.0.3:3001')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // allow non-browser requests (curl, Postman) when origin is undefined
+    // Permite todos los orígenes en desarrollo
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    // Configuración original para producción
     if (!origin) return callback(null, true);
     return allowedOrigins.includes(origin) ? callback(null, true) : callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Origin','X-Requested-With','Content-Type','Accept','Authorization'],
+methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  
+  // ✅ LA LISTA VA "DENTRO" DEL OBJETO corsOptions
+ allowedHeaders: [
+    'Origin',
+    'X-Requested-With',
+    'Content-Type',
+    'Accept',
+    'Authorization',
+    'x-access-token' // <-- La nueva cabecera que permite el token
+  ],
 };
 
 app.use(cors(corsOptions));
