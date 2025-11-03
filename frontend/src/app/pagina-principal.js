@@ -1,8 +1,48 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 
 export default function PaginaPrincipal() {
+
+
+  // --- NUEVO ---
+  const router = useRouter(); // Para manejar el logout
+  
+  // Estados para saber si el usuario está logueado y quién es
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Este 'useEffect' se ejecuta CUANDO la página carga en el navegador
+  useEffect(() => {
+    // Revisa el localStorage para ver si hay un token y datos de usuario
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user'); // El que guardamos en el login
+
+    if (token && userData) {
+      // Si encontramos ambos, el usuario está logueado
+      setIsLoggedIn(true);
+      setUser(JSON.parse(userData)); // Convertimos el texto de vuelta a un objeto
+    }
+  }, []); // El array vacío [] asegura que solo se ejecute una vez
+
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    // Limpiamos el localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Actualizamos los estados
+    setIsLoggedIn(false);
+    setUser(null);
+    
+    // Forzamos un refresh de la página para asegurar que todo se limpie
+    router.refresh(); 
+  };
+// --- FIN NUEVO ---
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
@@ -29,12 +69,29 @@ export default function PaginaPrincipal() {
               <li><Link href="/snacks">Snacks</Link></li>
               <li><Link href="/preventa">Pre venta</Link></li>
             </ul>
-
-            <Link href="/login">
-              <button className="px-4 py-2 rounded bg-black text-white text-sm">
-                Iniciar Sesión
-              </button>
-            </Link>
+{/* --- MODIFICADO --- */}
+            {isLoggedIn && user ? (
+              // Si SÍ está logueado, muestra saludo y botón de logout
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium hidden sm:block">
+                  Hola, {user.nombre}
+                </span>
+                <button 
+                  onClick={handleLogout}
+                  className="px-4 py-2 rounded bg-gray-200 text-black text-sm hover:bg-gray-300"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
+            ) : (
+              // Si NO está logueado, muestra el botón original
+              <Link href="/login">
+  <button className="px-4 py-2 rounded bg-black text-white text-sm">
+Iniciar Sesión
+</button>
+</Link>
+            )}
+            {/* --- FIN MODIFICADO --- */}
           </nav>
         </div>
       </header>
@@ -48,11 +105,22 @@ export default function PaginaPrincipal() {
             <p className="text-gray-600 mb-6">
               CineHa es un espacio donde puedes comprar y reservar boletos para tus películas favoritas.
             </p>
+<div className="flex gap-4 items-center mb-8">
+              {/* --- MODIFICADO --- */}
+              {isLoggedIn ? (
+                // Si está logueado, podríamos llevarlo a su perfil
+                <Link href="/perfil">
+                  <button className="bg-black text-white px-5 py-3 rounded">Ver Mi Perfil</button>
+                </Link>
+              ) : (
+                // Si no, lo mandamos a login
+                <Link href="/login">
+                  <button className="bg-black text-white px-5 py-3 rounded">Iniciar Sesión</button>
+                </Link>
+              )}
+              {/* --- FIN MODIFICADO --- */}
 
-            <div className="flex gap-4 items-center mb-8">
-              <Link href="/login">
-                <button className="bg-black text-white px-5 py-3 rounded">Iniciar Sesión</button>
-              </Link>
+              {/* ...el resto del div (input de buscar) se queda igual... */}
 
               <div className="hidden sm:block">
                 <div className="relative">
