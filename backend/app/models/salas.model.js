@@ -4,5 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     nombre: { type: DataTypes.STRING, allowNull: false },
     capacidad: { type: DataTypes.INTEGER, allowNull: false }
   }, { tableName: 'salas', timestamps: true });
+
+    // Asociaciones
+  Sala.associate = models => {
+    Sala.hasMany(models.Asiento, { foreignKey: 'salaId', as: 'asientos' });
+  };
   return Sala;
 };
