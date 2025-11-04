@@ -126,11 +126,12 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* --- ENLACE COMPLETAMENTE NEGRO --- */}
+          {/* --- ENLACE COMPLETAMENTE NEGRO CON ESTILO FORZADO --- */}
           <div className="mb-6 text-center">
             <Link 
               href="/forgot-password" 
-              className="text-base font-bold text-black hover:text-black hover:underline"
+              className="text-base font-bold hover:underline"
+              style={{ color: '#000000' }}
             >
               ¿Olvidaste tu contraseña?
             </Link>
