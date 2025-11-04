@@ -1,14 +1,14 @@
-'use client';
-import React, { useEffect, useState, useMemo } from 'react';
-import { api } from '../../services/api';
-import SeatMap from '../../asientos/components/SeatMap';
-import ErrorBox from '../../components/ErrorBox';
+"use client";
+import React, { useEffect, useState } from "react";
+import { api } from "../../services/api";
+import SeatMap from "../../asientos/components/SeatMap";
+import ErrorBox from "../../components/ErrorBox";
 
 export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave, currentUserId = null }) {
   const [funciones, setFunciones] = useState([]);
-  const [asientos, setAsientos] = useState([]);
-  const [funcionId, setFuncionId] = useState(initial.funcionId || '');
-  const [selectedSeat, setSelectedSeat] = useState(initial.asientoId ? String(initial.asientoId) : '');
+  const [asientos, setAsientos] = useState([]); // todos los asientos de la sala
+  const [funcionId, setFuncionId] = useState(initial.funcionId || "");
+  const [selectedSeat, setSelectedSeat] = useState(initial.asientoId ? String(initial.asientoId) : "");
   const [loadingSeats, setLoadingSeats] = useState(false);
   const [errorUI, setErrorUI] = useState(null);
   const [successUI, setSuccessUI] = useState(null);
@@ -25,7 +25,7 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
   useEffect(() => {
     if (!funcionId) {
       setAsientos([]);
-      setSelectedSeat('');
+      setSelectedSeat("");
       return;
     }
     let mounted = true;
@@ -39,23 +39,29 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
         const salaId = f?.salaId ?? f?.Sala?.id;
         if (!salaId) {
           setAsientos([]);
-          setSelectedSeat('');
+          setSelectedSeat("");
           setLoadingSeats(false);
-          setErrorUI('No se encontró la sala asociada a la función.');
+          setErrorUI("No se encontró la sala asociada a la función.");
           return;
         }
-        const getAsientos = api.getAsientosBySala ? api.getAsientosBySala : (id => fetch(`/api/salas/${id}/asientos`).then(r=>r.json()));
+
+        // obtener TODOS los asientos de la sala (para mostrar mapa con ocupados)
+        const getAsientos = api.getAsientosBySala ? api.getAsientosBySala : (id => fetch(`/api/asientos/sala/${id}`).then(r=>r.json()));
         const a = await getAsientos(salaId);
         if (!mounted) return;
-        const disponibles = (a || []).filter(s => !s.estado || (s.estado !== 'reservado' && s.estado !== 'vendido'));
-        setAsientos(disponibles);
-        setSelectedSeat(disponibles.length ? String(disponibles[0].id) : '');
+
+        // ponemos todos los asientos en el mapa
+        setAsientos(a || []);
+
+        // seleccionar por defecto el primer asiento disponible (si existe)
+        const disponibles = (a || []).filter(s => !s.estado || (String(s.estado).toLowerCase() !== "reservado" && String(s.estado).toLowerCase() !== "vendido"));
+        setSelectedSeat(disponibles.length ? String(disponibles[0].id) : "");
       })
       .catch(err => {
-        console.error('Error cargando asientos', err);
+        console.error("Error cargando asientos", err);
         setAsientos([]);
-        setSelectedSeat('');
-        setErrorUI('No fue posible cargar los asientos para la función seleccionada.');
+        setSelectedSeat("");
+        setErrorUI("No fue posible cargar los asientos para la función seleccionada.");
       })
       .finally(() => setLoadingSeats(false));
 
@@ -64,8 +70,9 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
 
   function handleSeatClickForSelection(seat) {
     if (!seat) return;
-    if (seat.estado === 'reservado' || seat.estado === 'vendido') {
-      setErrorUI('Ese asiento no está disponible.');
+    // SeatMap marcará __occupiedClick para clicks en asientos ocupados
+    if (seat.__occupiedClick || String(seat.estado || "").toLowerCase() === "reservado" || String(seat.estado || "").toLowerCase() === "vendido") {
+      setErrorUI("Ese asiento no está disponible.");
       return;
     }
     setSelectedSeat(String(seat.id));
@@ -100,6 +107,9 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
     }
   }
 
+  // lista de asientos disponibles para mostrar en <select>
+  const asientosDisponibles = (asientos || []).filter(s => !s.estado || (String(s.estado).toLowerCase() !== "reservado" && String(s.estado).toLowerCase() !== "vendido"));
+
   return (
     <form onSubmit={handleSubmit} className="text-black">
       {errorUI && <div className="mb-3"><ErrorBox message={errorUI} onClose={() => setErrorUI(null)} /></div>}
@@ -128,12 +138,28 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
             <div className="text-sm font-medium text-gray-700">Reservando para:</div>
             <div className="text-sm text-gray-900 mt-1">Usuario actual (automático)</div>
           </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium mb-1">Selecciona asiento (lista)</label>
+            {loadingSeats ? (
+              <div className="text-sm text-gray-600">Cargando asientos...</div>
+            ) : asientosDisponibles.length === 0 ? (
+              <div className="text-sm text-gray-600">No hay asientos disponibles para la función seleccionada.</div>
+            ) : (
+              <select value={selectedSeat} onChange={e => setSelectedSeat(e.target.value)} className="w-full border rounded px-3 py-2">
+                <option value="">-- Selecciona asiento --</option>
+                {asientosDisponibles.map(a => (
+                  <option key={a.id} value={a.id}>{a.fila}{a.numero} ({a.tipo || "normal"})</option>
+                ))}
+              </select>
+            )}
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Selecciona tu Asiento</label>
+          <label className="block text-sm font-medium mb-1">Selecciona tu Asiento (mapa)</label>
           <div className="mb-2 text-xs text-gray-600">
-            Haz clic en un asiento disponible para seleccionarlo. Los asientos ocupados no están disponibles.
+            Haz clic en un asiento disponible para seleccionarlo. Los asientos ocupados no están disponibles y aparecerán bloqueados.
           </div>
 
           <div className="p-3 bg-white border border-gray-300 rounded">
@@ -141,9 +167,10 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
               <div className="text-sm text-gray-600">Cargando asientos disponibles...</div>
             ) : asientos.length === 0 ? (
               <div className="text-sm text-gray-600">
-                {funcionId ? 'No hay asientos disponibles para esta función.' : 'Selecciona una función primero.'}
+                {funcionId ? 'No hay asientos configurados para esta sala.' : 'Selecciona una función primero.'}
               </div>
             ) : (
+              // ahora pasamos TODOS los asientos para que el mapa muestre ocupados
               <SeatMap seats={asientos} onSeatClick={handleSeatClickForSelection} />
             )}
           </div>

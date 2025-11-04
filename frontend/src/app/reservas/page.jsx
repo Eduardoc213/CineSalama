@@ -73,49 +73,44 @@ export default function ReservasPage() {
     return (reservas || []).filter(r => String(r.usuarioId) === String(currentUser.id));
   }, [reservas, isAdmin, currentUser]);
 
-  const handleCreate = async (payload) => {
-    if (!currentUser) {
-      setErrorUI('Debes iniciar sesión para hacer reservas.');
-      return;
-    }
+const handleCreate = async (payload) => {
+  if (!currentUser) {
+    setErrorUI('Debes iniciar sesión para hacer reservas.');
+    return;
+  }
 
-    try {
-      setErrorUI(null);
-      setSuccessUI(null);
-      setLoading(true);
-      
-      // El payload ya viene con el usuarioId correcto del formulario
-      const newRes = await api.createReserva(payload);
+  const asientoId = Number(payload.asientoId);
+  if (!asientoId) {
+    setErrorUI('Asiento inválido.');
+    return;
+  }
 
-      // intentar bloquear asiento
-      try {
-        await api.updateAsiento(payload.asientoId, { estado: 'reservado' });
-      } catch (err) {
-        console.warn('No se pudo marcar asiento como reservado:', err);
-        // rollback: eliminar reserva creada si no se pudo reservar el asiento
-        try {
-          if (newRes && newRes.id) await api.deleteReserva(newRes.id);
-        } catch (rollbackErr) {
-          console.error('Rollback de reserva falló:', rollbackErr);
-        }
-        setErrorUI('No fue posible reservar el asiento (otro usuario pudo haberlo tomado). Intenta con otro asiento.');
-        setLoading(false);
-        await load();
-        return;
-      }
+  try {
+    setErrorUI(null);
+    setSuccessUI(null);
+    setLoading(true);
 
-      setSuccessUI('Reserva creada correctamente.');
-      setShowForm(false);
-      await load();
-    } catch (err) {
-      console.error('Error creando reserva', err);
+    // Llamamos al endpoint de crear reserva que ahora valida y reserva el asiento en una transacción.
+    const newRes = await api.createReserva(payload);
+    setSuccessUI('Reserva creada correctamente.');
+    setShowForm(false);
+    await load();
+  } catch (err) {
+    console.error('createReserva error:', err);
+    // manejar conflicto (409) cuando asiento ya ocupado
+    if (err?.status === 409) {
+      setErrorUI('No fue posible crear la reserva: el asiento ya está ocupado.');
+    } else {
       setErrorUI(err?.body?.message || err?.message || 'No se pudo crear la reserva.');
-      await load();
-    } finally {
-      setLoading(false);
-      setTimeout(() => { setErrorUI(null); setSuccessUI(null); }, 6000);
     }
-  };
+    await load();
+  } finally {
+    setLoading(false);
+    setTimeout(() => { setErrorUI(null); setSuccessUI(null); }, 6000);
+  }
+};
+
+
 
   const handleMarkPaid = async (id) => {
     try {

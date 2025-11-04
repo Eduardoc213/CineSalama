@@ -46,12 +46,46 @@ exports.findBySala = async (req, res) => {
 // MODIFICAR
 exports.update = async (req, res) => {
   try {
-    const [updated] = await Asiento.update(req.body, { where: { id: req.params.id } });
-    updated
-      ? res.json({ message: "Asiento actualizado" })
-      : res.status(404).json({ message: "Asiento no encontrado" });
+    const id = req.params.id;
+    const payload = req.body || {};
+
+    // si intentan marcar reservado, hacerlo de forma condicional
+    if (payload.estado && String(payload.estado).toLowerCase() === "reservado") {
+      const [affected] = await Asiento.update(
+        { ...payload, estado: "reservado" },
+        {
+          where: {
+            id,
+            estado: { [Op.notIn]: ["reservado", "vendido"] } // sólo si no está ocupado
+          }
+        }
+      );
+
+      if (affected === 0) {
+        // verificar existencia real
+        const exists = await Asiento.findByPk(id);
+        if (!exists) return res.status(404).json({ message: "Asiento no encontrado" });
+        return res.status(409).json({ message: "Asiento ya ocupado" });
+      }
+
+      const updated = await Asiento.findByPk(id);
+      return res.json(updated);
+    }
+
+    // Normal update para otros campos permitidos
+    const asiento = await Asiento.findByPk(id);
+    if (!asiento) return res.status(404).json({ message: "Asiento no encontrado" });
+
+    const allowed = ["fila", "numero", "tipo", "salaId", "estado"];
+    Object.keys(payload).forEach(key => {
+      if (allowed.includes(key)) asiento[key] = payload[key];
+    });
+
+    await asiento.save();
+    return res.json(asiento);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error updating Asiento:", err);
+    return res.status(500).json({ message: err.message });
   }
 };
 

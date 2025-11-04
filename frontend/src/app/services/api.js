@@ -5,7 +5,8 @@ const BASE = "/api"; // request se encargará de anteponer NEXT_PUBLIC_API_BASE
 // Asientos
 export const getAsientos = () => request(`${BASE}/asientos`);
 export const getAsiento = (id) => request(`${BASE}/asientos/${id}`);
-export const getAsientosBySala = (salaId) => request(`${BASE}/salas/${salaId}/asientos`);
+//export const getAsientosBySala = (salaId) => request(`${BASE}/salas/${salaId}/asientos`);
+export const getAsientosBySala = (salaId) => request(`${BASE}/asientos/sala/${salaId}`);
 export const createAsiento = (data) => request(`${BASE}/asientos`, { method: "POST", body: JSON.stringify(data) });
 export const updateAsiento = (id, data) => request(`${BASE}/asientos/${id}`, { method: "PUT", body: JSON.stringify(data) });
 export const deleteAsiento = (id) => request(`${BASE}/asientos/${id}`, { method: "DELETE" });
