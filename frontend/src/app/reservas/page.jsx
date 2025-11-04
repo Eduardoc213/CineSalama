@@ -1,84 +1,115 @@
-"use client";
-import React, { useEffect, useState, useMemo } from "react";
-import { api } from "../services/api";
-import ReservaForm from "./components/ReservaForm";
-import ReservaCard from "./components/ReservaCard";
-import ErrorBox from "../components/ErrorBox";
-import SuccessBox from "../components/SuccessBox";
+'use client';
+import React, { useEffect, useState, useMemo } from 'react';
+import { api } from '../services/api';
+import ReservaForm from './components/ReservaForm';
+import ReservaCard from './components/ReservaCard';
+import ErrorBox from '../components/ErrorBox';
+import SuccessBox from '../components/SuccessBox';
+import { useRouter } from 'next/navigation';
 
 export default function ReservasPage() {
+  const router = useRouter();
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [errorUI, setErrorUI] = useState(null);
   const [successUI, setSuccessUI] = useState(null);
   const [deletePendingId, setDeletePendingId] = useState(null);
-  const currentUserId = useMemo(() => {
-    if (typeof window === "undefined") return null;
-    const qs = new URLSearchParams(window.location.search);
-    return qs.get("userId") || window.localStorage.getItem("userId") || null;
-  }, []);
+  
+  // Obtener usuario desde localStorage (tu sistema de autenticación)
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    // Verificar autenticación al cargar la página
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    
+    if (!token || !userData) {
+      router.push('/login');
+      return;
+    }
+    
+    try {
+      const user = JSON.parse(userData);
+      setCurrentUser(user);
+    } catch (err) {
+      console.error('Error parsing user data:', err);
+      router.push('/login');
+    }
+  }, [router]);
 
   const isAdmin = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    const qs = new URLSearchParams(window.location.search);
-    return qs.get("admin") === "1" || window.localStorage.getItem("isAdmin") === "1";
-  }, []);
+    return currentUser?.rol?.toLowerCase() === 'admin';
+  }, [currentUser]);
 
   const load = async () => {
+    if (!currentUser) return;
+    
     setLoading(true);
     try {
       const data = await api.getReservas();
-      const sorted = (data || []).slice().sort((a, b) => new Date(b.createdAt || b.created_at || 0) - new Date(a.createdAt || a.created_at || 0));
+      const sorted = (data || []).slice().sort((a, b) => 
+        new Date(b.createdAt || b.created_at || 0) - new Date(a.createdAt || a.created_at || 0)
+      );
       setReservas(sorted);
     } catch (err) {
-      console.error("Error cargando reservas", err);
-      setErrorUI("No se pudieron cargar las reservas.");
+      console.error('Error cargando reservas', err);
+      setErrorUI('No se pudieron cargar las reservas.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { 
+    if (currentUser) {
+      load(); 
+    }
+  }, [currentUser]);
 
-  // Mostrar reservas: admin -> todas, usuario -> solo las suyas (si currentUserId existe)
+  // Mostrar reservas: admin -> todas, usuario -> solo las suyas
   const visibleReservas = useMemo(() => {
+    if (!currentUser) return [];
     if (isAdmin) return reservas;
-    if (!currentUserId) return reservas.filter(r => false); 
-    return (reservas || []).filter(r => String(r.usuarioId) === String(currentUserId));
-  }, [reservas, isAdmin, currentUserId]);
+    return (reservas || []).filter(r => String(r.usuarioId) === String(currentUser.id));
+  }, [reservas, isAdmin, currentUser]);
 
-  // Crear reserva: hacemos createReserva, luego marcamos asiento como reservado.
   const handleCreate = async (payload) => {
+    if (!currentUser) {
+      setErrorUI('Debes iniciar sesión para hacer reservas.');
+      return;
+    }
+
     try {
       setErrorUI(null);
       setSuccessUI(null);
       setLoading(true);
+      
+      // El payload ya viene con el usuarioId correcto del formulario
       const newRes = await api.createReserva(payload);
 
       // intentar bloquear asiento
       try {
-        await api.updateAsiento(payload.asientoId, { estado: "reservado" });
+        await api.updateAsiento(payload.asientoId, { estado: 'reservado' });
       } catch (err) {
-        console.warn("No se pudo marcar asiento como reservado:", err);
+        console.warn('No se pudo marcar asiento como reservado:', err);
         // rollback: eliminar reserva creada si no se pudo reservar el asiento
         try {
           if (newRes && newRes.id) await api.deleteReserva(newRes.id);
         } catch (rollbackErr) {
-          console.error("Rollback de reserva falló:", rollbackErr);
+          console.error('Rollback de reserva falló:', rollbackErr);
         }
-        setErrorUI("No fue posible reservar el asiento (otro usuario pudo haberlo tomado). Intenta con otro asiento.");
+        setErrorUI('No fue posible reservar el asiento (otro usuario pudo haberlo tomado). Intenta con otro asiento.');
         setLoading(false);
         await load();
         return;
       }
 
-      setSuccessUI("Reserva creada correctamente.");
+      setSuccessUI('Reserva creada correctamente.');
       setShowForm(false);
       await load();
     } catch (err) {
-      console.error("Error creando reserva", err);
-      setErrorUI(err?.body?.message || err?.message || "No se pudo crear la reserva.");
+      console.error('Error creando reserva', err);
+      setErrorUI(err?.body?.message || err?.message || 'No se pudo crear la reserva.');
       await load();
     } finally {
       setLoading(false);
@@ -90,12 +121,12 @@ export default function ReservasPage() {
     try {
       setErrorUI(null);
       setSuccessUI(null);
-      await api.updateReserva(id, { estado: "pagado" });
-      setSuccessUI("Reserva marcada como pagada.");
+      await api.updateReserva(id, { estado: 'pagado' });
+      setSuccessUI('Reserva marcada como pagada.');
       await load();
     } catch (err) {
-      console.error("Error marcando pagado", err);
-      setErrorUI(err?.body?.message || "No se pudo marcar como pagado.");
+      console.error('Error marcando pagado', err);
+      setErrorUI(err?.body?.message || 'No se pudo marcar como pagado.');
     } finally {
       setTimeout(() => { setErrorUI(null); setSuccessUI(null); }, 5000);
     }
@@ -105,13 +136,13 @@ export default function ReservasPage() {
     try {
       setErrorUI(null);
       setSuccessUI(null);
-      await api.updateReserva(id, { estado: "cancelado" });
-      setSuccessUI("Reserva cancelada.");
+      await api.updateReserva(id, { estado: 'cancelado' });
+      setSuccessUI('Reserva cancelada.');
       await load();
     } catch (err) {
-      console.error("Error cancelando", err);
-      setErrorUI(err?.body?.message || "No se pudo cancelar la reserva.");
-      setTimeout(()=>setErrorUI(null), 5000);
+      console.error('Error cancelando', err);
+      setErrorUI(err?.body?.message || 'No se pudo cancelar la reserva.');
+      setTimeout(() => setErrorUI(null), 5000);
     }
   };
 
@@ -124,32 +155,47 @@ export default function ReservasPage() {
       setErrorUI(null);
       setSuccessUI(null);
       await api.deleteReserva(id);
-      setSuccessUI("Reserva eliminada.");
+      setSuccessUI('Reserva eliminada.');
       setDeletePendingId(null);
       await load();
     } catch (err) {
-      console.error("Error eliminando reserva", err);
-      setErrorUI(err?.body?.message || "No se pudo eliminar la reserva.");
+      console.error('Error eliminando reserva', err);
+      setErrorUI(err?.body?.message || 'No se pudo eliminar la reserva.');
       setDeletePendingId(null);
     } finally {
-      setTimeout(()=>{ setErrorUI(null); setSuccessUI(null); }, 6000);
+      setTimeout(() => { setErrorUI(null); setSuccessUI(null); }, 6000);
     }
   };
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="text-xl font-medium text-gray-900">Cargando...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white min-h-screen text-black">
       <div className="max-w-6xl mx-auto">
         <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-extrabold">Reservas</h1>
-            <p className="mt-1 text-sm text-gray-700">Mis reservas.</p>
+            <h1 className="text-3xl font-extrabold">Mis Reservas</h1>
+            <p className="mt-1 text-sm text-gray-700">
+              {isAdmin ? 'Todas las reservas del sistema' : `Reservas de ${currentUser.nombre}`}
+            </p>
           </div>
           <div className="flex gap-3 items-center">
-            <button onClick={() => setShowForm(s => !s)} className="bg-black text-white px-4 py-2 rounded-lg shadow">
-              {showForm ? "Cerrar" : "Nueva Reserva"}
+            <button 
+              onClick={() => setShowForm(s => !s)} 
+              className="bg-black text-white px-4 py-2 rounded-lg shadow hover:bg-gray-800 transition-colors"
+            >
+              {showForm ? 'Cerrar Formulario' : 'Nueva Reserva'}
             </button>
             <div className="text-xs text-gray-500">
-              {isAdmin ? "Modo: Administrador (todas las reservas)" : (currentUserId ? `Usuario: ${currentUserId}` : "Usuario no identificado")}
+              {isAdmin ? 'Modo Administrador' : `Conectado como: ${currentUser.nombre}`}
             </div>
           </div>
         </header>
@@ -176,7 +222,7 @@ export default function ReservasPage() {
             <ReservaForm
               onCancel={() => setShowForm(false)}
               onSave={handleCreate}
-              currentUserId={currentUserId}
+              currentUserId={currentUser.id}
             />
           </div>
         )}
@@ -185,7 +231,11 @@ export default function ReservasPage() {
           <div className="text-gray-600">Cargando reservas...</div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {visibleReservas.length === 0 && <div className="text-gray-700">No hay reservas visibles.</div>}
+            {visibleReservas.length === 0 && (
+              <div className="text-center py-8 text-gray-700">
+                {isAdmin ? 'No hay reservas en el sistema.' : 'No tienes reservas. ¡Haz tu primera reserva!'}
+              </div>
+            )}
             {visibleReservas.map(r => (
               <ReservaCard
                 key={r.id}
