@@ -4,7 +4,9 @@ module.exports = (sequelize, DataTypes) => {
     nombre: { type: DataTypes.STRING, allowNull: false },
     descripcion: { type: DataTypes.STRING },
     puntos_necesarios: { type: DataTypes.INTEGER, defaultValue: 0 },
-    descuento: { type: DataTypes.FLOAT, defaultValue: 0 }
+    descuento: { type: DataTypes.FLOAT, defaultValue: 0 },
+    fecha_expiracion: { type: DataTypes.DATE },
+    activa: { type: DataTypes.BOOLEAN, defaultValue: true }
   }, { tableName: 'promos', timestamps: true });
   return Promo;
 };

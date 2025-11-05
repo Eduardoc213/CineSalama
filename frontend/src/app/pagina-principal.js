@@ -4,6 +4,26 @@ import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import api from "./services/api"; 
+import { useCart } from "./context/CartContext"; // Importar el hook del carrito
+
+// Componente del Icono del Carrito
+function CartIcon() {
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
+
+  return (
+    <Link href="/cart" className="relative">
+      <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+        <span className="text-xl">🛒</span>
+        {totalItems > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            {totalItems}
+          </span>
+        )}
+      </button>
+    </Link>
+  );
+}
 
 export default function PaginaPrincipal() {
   const router = useRouter();
@@ -186,10 +206,14 @@ export default function PaginaPrincipal() {
             <ul className="flex gap-6 items-center text-sm">
               <li><Link href="/cliente/estrenos" className="hover:underline">Estrenos</Link></li>
               <li><Link href="/snacks" className="hover:underline">Snacks</Link></li>
+              <li><Link href="/promos" className="hover:underline">Promociones</Link></li>
               <li><Link href="/preventa" className="hover:underline">Pre venta</Link></li>
             </ul>
 
             <div className="flex gap-3 items-center">
+              {/* Icono del Carrito - Agregado aquí */}
+              <CartIcon />
+
               {/* Sistema de autenticación de tu código */}
               {isLoggedIn && user ? (
                 <div className="flex items-center gap-4">
@@ -380,6 +404,49 @@ export default function PaginaPrincipal() {
                     </div>
                   );
                 })}
+              </div>
+            </section>
+
+            {/* Nueva sección para promociones destacadas */}
+            <section className="mt-16 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-8">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-semibold">Promociones Especiales</h2>
+                  <p className="text-gray-600">Aprovecha nuestras ofertas exclusivas</p>
+                </div>
+                <Link href="/promos">
+                  <button className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                    Ver Todas las Promociones
+                  </button>
+                </Link>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white rounded-lg shadow-md p-6 border border-orange-200">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-orange-100 p-3 rounded-full">
+                      <span className="text-orange-600 text-2xl">🎫</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">2x1 en Martes</h3>
+                      <p className="text-gray-600 text-sm">Dos entradas por el precio de uno</p>
+                      <p className="text-orange-600 font-bold mt-1">50% de descuento</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow-md p-6 border border-orange-200">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-orange-100 p-3 rounded-full">
+                      <span className="text-orange-600 text-2xl">👨‍👩‍👧‍👦</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Combo Familiar</h3>
+                      <p className="text-gray-600 text-sm">4 entradas + snacks</p>
+                      <p className="text-orange-600 font-bold mt-1">30% de descuento</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 

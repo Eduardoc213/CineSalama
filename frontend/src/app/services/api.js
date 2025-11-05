@@ -46,7 +46,7 @@ export const createReserva = (data) => request(`${BASE}/reservas`, { method: "PO
 export const updateReserva = (id, data) => request(`${BASE}/reservas/${id}`, { method: "PUT", body: JSON.stringify(data) });
 export const deleteReserva = (id) => request(`${BASE}/reservas/${id}`, { method: "DELETE" });
 
-// Snacks
+// Snacks - funciones actualizadas
 export const getSnacks = () => request(`${BASE}/snacks`);
 export const getSnack = (id) => request(`${BASE}/snacks/${id}`);
 export const createSnack = (data) => request(`${BASE}/snacks`, { method: "POST", body: JSON.stringify(data) });

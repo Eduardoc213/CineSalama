@@ -5,7 +5,6 @@ module.exports = app => {
 
   router.get('/', promos.findAll);
   router.get('/:id', promos.findOne);
-
   router.post('/', [verifyToken, isAdmin], promos.create);
   router.put('/:id', [verifyToken, isAdmin], promos.update);
   router.delete('/:id', [verifyToken, isAdmin], promos.delete);
