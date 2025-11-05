@@ -33,16 +33,22 @@ export default function PerfilPage() {
         if (res.ok && data.success) {
           setUser(data.data);
           
-          // Actualizar localStorage con el rol del perfil
+          // ACTUALIZAR LOCALSTORAGE CON DATOS ACTUALIZADOS DEL SERVER
+          const userData = {
+            id: data.data.id,
+            nombre: data.data.nombre,
+            email: data.data.email,
+            rol: data.data.rol
+          };
+          
+          localStorage.setItem('user', JSON.stringify(userData));
           localStorage.setItem('userRole', data.data.rol);
           localStorage.setItem('userEmail', data.data.email);
           
-          // Actualizar también el objeto user
-          const userData = JSON.parse(localStorage.getItem('user') || '{}');
-          userData.rol = data.data.rol;
-          localStorage.setItem('user', JSON.stringify(userData));
+          console.log('Perfil cargado - Rol actualizado:', data.data.rol);
         } else {
           setError(data.message || 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+          // LIMPIAR LOCALSTORAGE COMPLETAMENTE
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           localStorage.removeItem('userRole');
@@ -61,7 +67,7 @@ export default function PerfilPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg text-center">
           <div className="animate-pulse text-gray-600">Cargando perfil...</div>
         </div>
@@ -71,7 +77,7 @@ export default function PerfilPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg text-center">
           <p className="text-gray-700 mb-4">{error}</p>
           <Link href="/login" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
@@ -84,29 +90,8 @@ export default function PerfilPage() {
 
   if (user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-8 relative overflow-hidden">
-        {/* Burbujas de fondo */}
-        <div className="fixed inset-0 pointer-events-none z-0">
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full opacity-20 animate-float-slow"
-              style={{
-                width: Math.random() * 60 + 30 + 'px',
-                height: Math.random() * 60 + 30 + 'px',
-                left: Math.random() * 100 + '%',
-                top: Math.random() * 100 + '%',
-                background: `linear-gradient(45deg, 
-                  ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
-                  ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
-                animationDelay: Math.random() * 10 + 's',
-                animationDuration: Math.random() * 20 + 20 + 's'
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="max-w-xl mx-auto relative z-10">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-8">
+        <div className="max-w-xl mx-auto">
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-8">
             <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Mi Perfil

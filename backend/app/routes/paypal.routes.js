@@ -8,5 +8,4 @@ module.exports = app => {
   // Capturar orden de pago
   router.post('/capture-order', paypal.captureOrder);
 
-  app.use('/api/paypal', router);
-};
+  app.use('/api/paypal', router);};

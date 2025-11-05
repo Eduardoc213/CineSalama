@@ -16,13 +16,13 @@ export default function EditarPerfilPage() {
   const [success, setSuccess] = useState(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
 
+    const fetchProfile = async () => {
       try {
         const res = await fetch('http://localhost:3000/api/user/profile', {
           headers: { 'x-access-token': token },
@@ -32,8 +32,18 @@ export default function EditarPerfilPage() {
         if (res.ok && data.success) {
           setNombre(data.data.nombre);
           setTelefono(data.data.telefono || '');
+          
+          // ACTUALIZAR LOCALSTORAGE CON DATOS ACTUALIZADOS
+          const userData = JSON.parse(localStorage.getItem('user') || '{}');
+          userData.nombre = data.data.nombre;
+          userData.rol = data.data.rol;
+          localStorage.setItem('user', JSON.stringify(userData));
+          localStorage.setItem('userRole', data.data.rol);
         } else {
           localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userEmail');
           router.push('/login');
         }
       } catch (err) {
@@ -77,7 +87,9 @@ export default function EditarPerfilPage() {
 
       if (res.ok && data.success) {
         setSuccess('¡Perfil actualizado con éxito!');
-        const user = JSON.parse(localStorage.getItem('user'));
+        
+        // ACTUALIZAR LOCALSTORAGE INMEDIATAMENTE
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
         user.nombre = nombre;
         localStorage.setItem('user', JSON.stringify(user));
 
@@ -96,7 +108,7 @@ export default function EditarPerfilPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg text-center">
           <div className="animate-pulse text-gray-600">Cargando...</div>
         </div>
@@ -105,29 +117,8 @@ export default function EditarPerfilPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-8 relative overflow-hidden">
-      {/* Burbujas de fondo */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full opacity-20 animate-float-slow"
-            style={{
-              width: Math.random() * 60 + 30 + 'px',
-              height: Math.random() * 60 + 30 + 'px',
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              background: `linear-gradient(45deg, 
-                ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
-                ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
-              animationDelay: Math.random() * 10 + 's',
-              animationDuration: Math.random() * 20 + 20 + 's'
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="max-w-xl mx-auto relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-8">
+      <div className="max-w-xl mx-auto">
         <Link href="/perfil" className="inline-flex items-center gap-2 text-gray-700 hover:text-black transition-colors mb-6 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl shadow-sm">
           ← Volver al Perfil
         </Link>
@@ -191,7 +182,6 @@ export default function EditarPerfilPage() {
               </div>
             </div>
 
-            {/* Mensajes de Éxito o Error */}
             {error && (
               <div className="bg-red-50/90 border-l-4 border-red-500 text-red-700 p-4 rounded-xl">
                 <div className="flex">
