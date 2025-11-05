@@ -30,45 +30,31 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-      console.log('Respuesta completa del backend:', data);
 
-      if (res.ok) {
-        if (data.userInfo && data.userInfo.token) {
-          localStorage.setItem('token', data.userInfo.token);
-          localStorage.setItem('user', JSON.stringify({ 
-            id: data.userInfo.id, 
-            nombre: data.userInfo.nombre,
-            email: data.userInfo.email 
-          }));
-          router.push('/');
-        }
-        else if (data.token) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify({ 
-            id: data.id, 
-            nombre: data.nombre,
-            email: data.email 
-          }));
-          router.push('/');
-        }
-        else if (data.data && data.data.token) {
-          localStorage.setItem('token', data.data.token);
-          localStorage.setItem('user', JSON.stringify({ 
-            id: data.data.id, 
-            nombre: data.data.nombre,
-            email: data.data.email 
-          }));
-          router.push('/');
-        }
-        else {
-          console.error('Estructura de respuesta inesperada:', data);
-          setError('Estructura de respuesta inesperada del servidor.');
-        }
+      if (res.ok && data.success) {
+        const userInfo = data.data;
+        const token = userInfo.token;
+        const userRole = userInfo.rol;
+
+        // Limpiar y guardar en localStorage
+        localStorage.clear();
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify({ 
+          id: userInfo.id, 
+          nombre: userInfo.nombre,
+          email: userInfo.email,
+          rol: userRole
+        }));
+        localStorage.setItem('userRole', userRole);
+        localStorage.setItem('userEmail', userInfo.email);
+
+        // Redirigir a página principal
+        router.push('/');
+
       } else {
         setError(data.message || 'Error en las credenciales.');
       }
     } catch (err) {
-      console.error('Error completo:', err);
       setError('No se pudo conectar al servidor. Inténtalo más tarde.');
     } finally {
       setIsLoading(false);
@@ -88,7 +74,6 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Campo de Email */}
           <div className="mb-4">
             <label 
               htmlFor="email" 
@@ -107,7 +92,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Campo de Contraseña */}
           <div className="mb-4">
             <label 
               htmlFor="password" 
@@ -126,7 +110,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* --- ENLACE COMPLETAMENTE NEGRO CON ESTILO FORZADO --- */}
           <div className="mb-6 text-center">
             <Link 
               href="/forgot-password" 
@@ -136,16 +119,13 @@ export default function LoginPage() {
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
-          {/* --- FIN ENLACE MEJORADO --- */}
 
-          {/* Mensaje de Error */}
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
               {error}
             </div>
           )}
 
-          {/* Botón de Enviar */}
           <div>
             <button
               type="submit"
