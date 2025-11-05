@@ -38,29 +38,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
-      {/* Burbujas de fondo */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full opacity-20 animate-float-slow"
-            style={{
-              width: Math.random() * 60 + 30 + 'px',
-              height: Math.random() * 60 + 30 + 'px',
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              background: `linear-gradient(45deg, 
-                ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
-                ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
-              animationDelay: Math.random() * 10 + 's',
-              animationDuration: Math.random() * 20 + 20 + 's'
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-8 relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-8">
         <div className="text-center mb-6">
           <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             CineHa
