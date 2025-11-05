@@ -32,10 +32,23 @@ export default function PerfilPage() {
 
         if (res.ok && data.success) {
           setUser(data.data);
+          
+          // ¡IMPORTANTE! Actualizar localStorage con el rol del perfil
+          localStorage.setItem('userRole', data.data.rol);
+          localStorage.setItem('userEmail', data.data.email);
+          
+          // Actualizar también el objeto user
+          const userData = JSON.parse(localStorage.getItem('user') || '{}');
+          userData.rol = data.data.rol;
+          localStorage.setItem('user', JSON.stringify(userData));
+
+          console.log('Perfil cargado - Rol:', data.data.rol);
         } else {
           setError(data.message || 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userEmail');
           router.push('/login');
         }
       } catch (err) {
@@ -94,9 +107,18 @@ export default function PerfilPage() {
                 {user.telefono ? user.telefono : 'No especificado'}
               </p>
             </div>
+            <hr className="border-gray-300" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Rol</label>
+              <p className={`text-lg font-semibold mt-1 ${
+                user.rol === 'Admin' ? 'text-red-600' : 'text-blue-600'
+              }`}>
+                {user.rol}
+                {user.rol === 'Admin' && ' ⭐'}
+              </p>
+            </div>
           </div>
 
-          {/* --- ESPACIADO MEJORADO --- */}
           <div className="mt-8 pt-6 border-t border-gray-300">
             <Link href="/perfil/editar">
               <button className="w-full py-3 px-4 rounded-md text-white bg-black hover:bg-gray-800 transition-colors duration-300 mb-4">
@@ -109,8 +131,18 @@ export default function PerfilPage() {
                 Volver al Inicio
               </button>
             </Link>
+
+            {/* Botón de debug */}
+            <button
+              onClick={() => {
+                const currentRole = localStorage.getItem('userRole');
+                alert(`Rol en localStorage: ${currentRole}\nRol en perfil: ${user.rol}`);
+              }}
+              className="w-full py-2 px-4 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-300 mt-2 text-sm"
+            >
+              Verificar Rol
+            </button>
           </div>
-          {/* --- FIN ESPACIADO MEJORADO --- */}
         </div>
       </main>
     );

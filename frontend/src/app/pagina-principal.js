@@ -8,11 +8,11 @@ import api from "./services/api";
 export default function PaginaPrincipal() {
   const router = useRouter();
   
-  // Estados para autenticación (de tu código)
+  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   
-  // Estados para datos de la aplicación (del código de tu amigo)
+  // Estados para datos de la aplicación 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [funciones, setFunciones] = useState([]);
@@ -20,7 +20,7 @@ export default function PaginaPrincipal() {
   const [estrenos, setEstrenos] = useState([]);
   const [salasMap, setSalasMap] = useState({});
 
-  // Efecto para verificar autenticación (de tu código)
+  // Efecto para verificar autenticación 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
@@ -31,7 +31,7 @@ export default function PaginaPrincipal() {
     }
   }, []);
 
-  // Efecto para cargar datos de la aplicación (del código de tu amigo)
+  // Efecto para cargar datos de la aplicación 
   useEffect(() => {
     let mounted = true;
     async function loadAll() {
@@ -73,7 +73,7 @@ export default function PaginaPrincipal() {
     return () => { mounted = false; };
   }, []);
 
-  // Función para cerrar sesión (de tu código)
+  // Función para cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -82,7 +82,7 @@ export default function PaginaPrincipal() {
     router.refresh();
   };
 
-  // Helpers para datos (del código de tu amigo)
+  // Helpers para datos 
   const peliculaById = useMemo(() => {
     const m = {};
     (peliculas || []).forEach(p => { m[String(p.id)] = p; });
@@ -209,7 +209,7 @@ export default function PaginaPrincipal() {
                 </Link>
               )}
 
-              {/* Botón de reservas del código de tu amigo */}
+              {/* Botón de reservas */}
               <Link href="/reservas">
                 <button className="px-4 py-2 rounded border border-black text-sm">Reservar</button>
               </Link>
@@ -218,7 +218,7 @@ export default function PaginaPrincipal() {
         </div>
       </header>
 
-      {/* Main - Del código de tu amigo pero con autenticación */}
+      {/* Main - */}
       <main className="max-w-6xl mx-auto px-6 py-12">
         {loading ? (
           <div className="text-center py-12 text-gray-600">Cargando contenido...</div>
@@ -256,7 +256,7 @@ export default function PaginaPrincipal() {
                   </div>
                 </div>
 
-                {/* MOST VIEWED - Del código de tu amigo */}
+                {/* MOST VIEWED - */}
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold mb-3">Lo más visto</h2>
                   <div className="space-y-3">
@@ -281,7 +281,7 @@ export default function PaginaPrincipal() {
                 </div>
               </div>
 
-              {/* Center column: hero posters + cartelera - Del código de tu amigo */}
+              {/* Center column: hero posters + cartelera  */}
               <div className="lg:col-span-2">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold">Lo más visto</h2>
@@ -337,7 +337,7 @@ export default function PaginaPrincipal() {
               </div>
             </div>
 
-            {/* Resto del contenido del código de tu amigo */}
+            {/* */}
             <section className="mt-12 grid lg:grid-cols-3 gap-8 items-center">
               <div className="lg:col-span-2">
                 <h3 className="text-2xl font-bold mb-2">Recomendado por CineHa</h3>
