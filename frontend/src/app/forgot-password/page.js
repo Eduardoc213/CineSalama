@@ -38,21 +38,42 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-white p-8">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 border border-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+      {/* Burbujas de fondo */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full opacity-20 animate-float-slow"
+            style={{
+              width: Math.random() * 60 + 30 + 'px',
+              height: Math.random() * 60 + 30 + 'px',
+              left: Math.random() * 100 + '%',
+              top: Math.random() * 100 + '%',
+              background: `linear-gradient(45deg, 
+                ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
+                ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
+              animationDelay: Math.random() * 10 + 's',
+              animationDuration: Math.random() * 20 + 20 + 's'
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-8 relative z-10">
         <div className="text-center mb-6">
-          <Link href="/" className="text-2xl font-bold text-gray-900">
+          <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             CineHa
           </Link>
-          <h1 className="text-3xl font-bold mt-2 text-gray-900">Recuperar Contraseña</h1>
+          <h1 className="text-2xl font-bold mt-4 text-gray-800">Recuperar Contraseña</h1>
           <p className="text-gray-600 mt-2">
             Ingresa tu correo y te enviaremos un enlace para restablecerla.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Correo Electrónico
             </label>
             <input
@@ -61,37 +82,54 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
               placeholder="tu@correo.com"
             />
           </div>
 
           {message && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 text-center">
-              {message}
+            <div className="bg-green-50/90 border-l-4 border-green-500 text-green-700 p-4 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">✅</div>
+                <div className="ml-3">
+                  <p className="text-sm">{message}</p>
+                </div>
+              </div>
             </div>
           )}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
-              {error}
+            <div className="bg-red-50/90 border-l-4 border-red-500 text-red-700 p-4 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">⚠️</div>
+                <div className="ml-3">
+                  <p className="text-sm">{error}</p>
+                </div>
+              </div>
             </div>
           )}
 
           <button
             type="submit"
             disabled={isLoading || message}
-            className="w-full py-2 px-4 rounded-md text-white bg-black hover:bg-gray-800 disabled:bg-gray-400 transition-colors duration-300"
+            className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
-            {isLoading ? 'Enviando...' : 'Enviar Enlace'}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Enviando...
+              </span>
+            ) : (
+              'Enviar Enlace'
+            )}
           </button>
         </form>
         
         <p className="text-center text-sm text-gray-600 mt-6">
-          <Link href="/login" className="font-medium text-black hover:underline">
+          <Link href="/login" className="font-medium text-purple-600 hover:text-purple-700 transition-colors">
             Volver a Iniciar Sesión
           </Link>
         </p>
       </div>
-    </main>
+    </div>
   );
 }
