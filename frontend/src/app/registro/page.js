@@ -55,23 +55,44 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-white p-8">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 border border-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+      {/* Burbujas de fondo */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full opacity-20 animate-float-slow"
+            style={{
+              width: Math.random() * 80 + 40 + 'px',
+              height: Math.random() * 80 + 40 + 'px',
+              left: Math.random() * 100 + '%',
+              top: Math.random() * 100 + '%',
+              background: `linear-gradient(45deg, 
+                ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
+                ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
+              animationDelay: Math.random() * 10 + 's',
+              animationDuration: Math.random() * 20 + 20 + 's'
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-8 relative z-10">
         
         <div className="text-center mb-6">
-          <Link href="/" className="text-2xl font-bold text-gray-900">
+          <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             CineHa
           </Link>
-          <h1 className="text-3xl font-bold mt-2 text-gray-900">Crear una Cuenta</h1>
-          <p className="text-gray-600 mt-2">Únete a la comunidad de CineHa.</p>
+          <h1 className="text-2xl font-bold mt-4 text-gray-800">Crear una Cuenta</h1>
+          <p className="text-gray-600 mt-2">Únete a la comunidad de CineHa</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Campo de Nombre */}
-          <div className="mb-4">
+          <div>
             <label 
               htmlFor="nombre" 
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Nombre Completo
             </label>
@@ -81,16 +102,16 @@ export default function RegisterPage() {
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
               placeholder="Tu nombre"
             />
           </div>
 
           {/* Campo de Email */}
-          <div className="mb-4">
+          <div>
             <label 
               htmlFor="email" 
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Correo Electrónico
             </label>
@@ -100,16 +121,16 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
               placeholder="tu@correo.com"
             />
           </div>
 
           {/* Campo de Teléfono */}
-          <div className="mb-4">
+          <div>
             <label 
               htmlFor="telefono" 
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Teléfono
             </label>
@@ -119,16 +140,16 @@ export default function RegisterPage() {
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
               placeholder="Ej: 55551234"
             />
           </div>
 
           {/* Campo de Contraseña */}
-          <div className="mb-4">
+          <div>
             <label 
               htmlFor="password" 
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Contraseña
             </label>
@@ -138,16 +159,16 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
               placeholder="••••••••"
             />
           </div>
 
           {/* Campo de Confirmar Contraseña */}
-          <div className="mb-6">
+          <div>
             <label 
               htmlFor="confirmPassword" 
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Confirmar Contraseña
             </label>
@@ -157,15 +178,20 @@ export default function RegisterPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
               placeholder="••••••••"
             />
           </div>
 
           {/* Mensaje de Error */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
-              {error}
+            <div className="bg-red-50/90 border-l-4 border-red-500 text-red-700 p-4 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">⚠️</div>
+                <div className="ml-3">
+                  <p className="text-sm">{error}</p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -174,20 +200,27 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-400 transition-colors duration-300"
+              className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
-              {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Creando cuenta...
+                </span>
+              ) : (
+                'Crear Cuenta'
+              )}
             </button>
           </div>
         </form>
 
         <p className="text-center text-sm text-gray-600 mt-6">
           ¿Ya tienes una cuenta?{' '}
-          <Link href="/login" className="font-medium text-black hover:underline">
+          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
             Inicia sesión aquí
           </Link>
         </p>
       </div>
-    </main>
+    </div>
   );
 }
