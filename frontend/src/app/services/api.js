@@ -1,6 +1,7 @@
+// frontend/src/app/services/api.js - VERSIÓN FUNCIONAL
 import request from "./request";
 
-const BASE = "/api"; // request se encargará de anteponer NEXT_PUBLIC_API_BASE
+const BASE = "/api";
 
 // Asientos
 export const getAsientos = () => request(`${BASE}/asientos`);
@@ -39,6 +40,15 @@ export const createFuncion = (data) => request(`${BASE}/funciones`, { method: "P
 export const updateFuncion = (id, data) => request(`${BASE}/funciones/${id}`, { method: "PUT", body: JSON.stringify(data) });
 export const deleteFuncion = (id) => request(`${BASE}/funciones/${id}`, { method: "DELETE" });
 
+
+
+
+// PayPal
+export const createPayPalOrder = (data) => request(`${BASE}/paypal/create-order`, { method: "POST", body: JSON.stringify(data) });
+export const capturePayPalOrder = (data) => request(`${BASE}/paypal/capture-order`, { method: "POST", body: JSON.stringify(data) });
+
+
+
 // Reservas
 export const getReservas = () => request(`${BASE}/reservas`);
 export const getReserva = (id) => request(`${BASE}/reservas/${id}`);
@@ -46,7 +56,7 @@ export const createReserva = (data) => request(`${BASE}/reservas`, { method: "PO
 export const updateReserva = (id, data) => request(`${BASE}/reservas/${id}`, { method: "PUT", body: JSON.stringify(data) });
 export const deleteReserva = (id) => request(`${BASE}/reservas/${id}`, { method: "DELETE" });
 
-// Snacks - funciones actualizadas
+// Snacks
 export const getSnacks = () => request(`${BASE}/snacks`);
 export const getSnack = (id) => request(`${BASE}/snacks/${id}`);
 export const createSnack = (data) => request(`${BASE}/snacks`, { method: "POST", body: JSON.stringify(data) });
@@ -148,6 +158,7 @@ const api = {
   
   // catálogo
   getCatalogoPeliculas, getCatalogoFunciones, getCatalogoSnacks, getCatalogoPromos, getCatalogoEstrenos
+
 };
 
 export default api;

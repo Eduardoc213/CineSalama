@@ -2,7 +2,7 @@ const db = require('../models');
 const { sendSuccess, sendError } = require('../utils/responseHandler.util.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { sendResetEmail } = require('../utils/mailer.util.js'); 
+const { sendResetEmail } = require('../utils/mailer.util.js');
 
 exports.login = async (req, res) => {
   if (!req.body.email || !req.body.password) {

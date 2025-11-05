@@ -1,13 +1,19 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
+import PayPalButton from './PayPalButton';
 
-export default function ReservaCard({ reserva, onMarkPaid, onCancel, onDelete }) {
+export default function ReservaCard({ reserva, onMarkPaid, onCancel, onDelete, onPaymentSuccess }) {
+  const [showPayPal, setShowPayPal] = useState(false);
   const fecha = reserva.createdAt ? new Date(reserva.createdAt).toLocaleString() : '';
   const peliculaTitulo = reserva.Funcion?.Pelicula?.titulo || reserva.Funcion?.pelicula?.titulo || reserva.peliculaTitulo || `Función ${reserva.funcionId}`;
   const asientoLabel = reserva.Asiento ? `${reserva.Asiento.fila || ''}${reserva.Asiento.numero || ''}` : (reserva.asientoId ? `Asiento ${reserva.asientoId}` : '-');
   
-  // Formatear el estado para que sea más amigable
   const estadoFormateado = reserva.estado?.charAt(0).toUpperCase() + reserva.estado?.slice(1) || 'Pendiente';
+
+  const handlePaymentSuccess = (response) => {
+    setShowPayPal(false);
+    onPaymentSuccess?.(reserva.id);
+  };
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow p-4 flex flex-col md:flex-row justify-between gap-4 items-start">
@@ -25,30 +31,53 @@ export default function ReservaCard({ reserva, onMarkPaid, onCancel, onDelete })
         <div className="text-xs text-gray-500 mt-1">Creada: {fecha}</div>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
-        {reserva.estado !== 'pagado' && reserva.estado !== 'cancelado' && (
-          <button 
-            onClick={() => onMarkPaid(reserva.id)} 
-            className="bg-black text-white px-3 py-1 rounded text-sm hover:bg-gray-800 transition-colors"
-          >
-            Marcar como Pagado
-          </button>
-        )}
+      <div className="flex gap-2 mt-4">
         {reserva.estado !== 'cancelado' && reserva.estado !== 'pagado' && (
           <button 
             onClick={() => onCancel(reserva.id)} 
-            className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 transition-colors"
+            className="px-3 py-1 border border-gray-500 rounded text-sm hover:bg-red-200 hover:text-red-700 transition-colors"
           >
             Cancelar
           </button>
         )}
         <button 
           onClick={() => onDelete(reserva.id)} 
-          className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-red-50 hover:text-red-700 transition-colors"
+          className="px-4 py-2 border border-gray-500 rounded text-sm hover:bg-red-200 hover:text-red-700 transition-colors"
         >
           Eliminar
         </button>
       </div>
+
+      {reserva.estado === 'pendiente' && (
+        <div className="flex gap-2 mt-4 ">
+          {showPayPal ? (
+            <div className="w-full">
+              <PayPalButton
+                reservaId={reserva.id}
+                amount={15}
+                onSuccess={handlePaymentSuccess}
+                onError={(err) => {
+                  console.error('Error PayPal:', err);
+                  setShowPayPal(false);
+                }}
+              />
+              <button
+                onClick={() => setShowPayPal(false)}
+                className="mt-2 w-full px-3 py-1 border rounded"
+              >
+                Cancelar Pago
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowPayPal(true)}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Pagar con PayPal
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

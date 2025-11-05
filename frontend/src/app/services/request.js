@@ -1,16 +1,13 @@
+// frontend/src/app/services/request.js
 export default async function request(path, options = {}) {
-  // Prioriza la variable de entorno, si no existe usa la URL del backend por defecto.
   const defaultBackend = "http://localhost:3000";
   const baseFromEnv = (typeof window !== "undefined") ? (process.env.NEXT_PUBLIC_API_BASE || "") : "";
   const base = (baseFromEnv && baseFromEnv.trim()) ? baseFromEnv.replace(/\/$/, "") : defaultBackend;
 
-  // Construir URL completa 
-  const fullUrl = path.startsWith("http") ? path : `${base}${path}`;
+  // ✅ CORREGIR: Evitar URLs duplicadas
+  const fullUrl = path.startsWith("http") ? path : `${base}${path.startsWith("/") ? path : "/" + path}`;
 
-  // Logs para depuración (muestran la URL usada)
-  console.log("[request] ->", options.method || "GET", fullUrl, options.body ? (() => {
-    try { return JSON.parse(options.body); } catch { return options.body; }
-  })() : "");
+  console.log("[request] ->", options.method || "GET", fullUrl);
 
   try {
     const res = await fetch(fullUrl, {

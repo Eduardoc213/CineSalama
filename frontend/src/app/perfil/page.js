@@ -33,7 +33,7 @@ export default function PerfilPage() {
         if (res.ok && data.success) {
           setUser(data.data);
           
-          // ¡IMPORTANTE! Actualizar localStorage con el rol del perfil
+          // Actualizar localStorage con el rol del perfil
           localStorage.setItem('userRole', data.data.rol);
           localStorage.setItem('userEmail', data.data.email);
           
@@ -41,8 +41,6 @@ export default function PerfilPage() {
           const userData = JSON.parse(localStorage.getItem('user') || '{}');
           userData.rol = data.data.rol;
           localStorage.setItem('user', JSON.stringify(userData));
-
-          console.log('Perfil cargado - Rol:', data.data.rol);
         } else {
           setError(data.message || 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
           localStorage.removeItem('token');
@@ -131,17 +129,6 @@ export default function PerfilPage() {
                 Volver al Inicio
               </button>
             </Link>
-
-            {/* Botón de debug */}
-            <button
-              onClick={() => {
-                const currentRole = localStorage.getItem('userRole');
-                alert(`Rol en localStorage: ${currentRole}\nRol en perfil: ${user.rol}`);
-              }}
-              className="w-full py-2 px-4 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-300 mt-2 text-sm"
-            >
-              Verificar Rol
-            </button>
           </div>
         </div>
       </main>
