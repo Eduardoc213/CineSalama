@@ -96,103 +96,150 @@ export default function EditarPerfilPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-white p-8">
-        <div className="text-xl font-medium text-gray-900">Cargando...</div>
-      </main>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg text-center">
+          <div className="animate-pulse text-gray-600">Cargando...</div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-white p-8">
-      <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md p-8 border border-gray-200">
-        <h1 className="text-4xl font-bold mb-6 text-gray-900">
-          Editar Perfil
-        </h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-            <input
-              type="text"
-              id="nombre"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black placeholder-gray-500"
-              required
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-            <input
-              type="tel"
-              id="telefono"
-              value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black placeholder-gray-500"
-            />
-          </div>
-          
-          <div className="border-t border-gray-300 pt-6">
-            <p className="text-sm text-gray-600 mb-4">
-              Cambiar Contraseña (deja en blanco si no quieres cambiarla)
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-8 relative overflow-hidden">
+      {/* Burbujas de fondo */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full opacity-20 animate-float-slow"
+            style={{
+              width: Math.random() * 60 + 30 + 'px',
+              height: Math.random() * 60 + 30 + 'px',
+              left: Math.random() * 100 + '%',
+              top: Math.random() * 100 + '%',
+              background: `linear-gradient(45deg, 
+                ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
+                ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
+              animationDelay: Math.random() * 10 + 's',
+              animationDuration: Math.random() * 20 + 20 + 's'
+            }}
+          />
+        ))}
+      </div>
 
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña</label>
+      <div className="max-w-xl mx-auto relative z-10">
+        <Link href="/perfil" className="inline-flex items-center gap-2 text-gray-700 hover:text-black transition-colors mb-6 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl shadow-sm">
+          ← Volver al Perfil
+        </Link>
+
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-8">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Editar Perfil
+          </h1>
+          <p className="text-gray-600 mb-6">Actualiza tu información personal</p>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
               <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black placeholder-gray-500"
-                placeholder="Mínimo 6 caracteres"
+                type="text"
+                id="nombre"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
+                required
               />
             </div>
             
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña</label>
+              <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
               <input
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black text-black placeholder-gray-500"
+                type="tel"
+                id="telefono"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
               />
             </div>
-          </div>
+            
+            <div className="border-t border-gray-300 pt-6">
+              <p className="text-sm text-gray-600 mb-4 bg-blue-50/80 p-3 rounded-xl">
+                Cambiar Contraseña (deja en blanco si no quieres cambiarla)
+              </p>
 
-          {/* Mensajes de Éxito o Error */}
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md">
-              {error}
+              <div className="mb-4">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
+                  placeholder="Mínimo 6 caracteres"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white/80 backdrop-blur-sm transition-all"
+                />
+              </div>
             </div>
-          )}
-          {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md">
-              {success}
-            </div>
-          )}
-          
-          <div className="flex gap-4 pt-4">
-            <Link href="/perfil" className="w-1/2">
-              <button 
-                type="button" 
-                className="w-full py-3 px-4 rounded-md text-black bg-gray-200 hover:bg-gray-300 transition-colors duration-300"
+
+            {/* Mensajes de Éxito o Error */}
+            {error && (
+              <div className="bg-red-50/90 border-l-4 border-red-500 text-red-700 p-4 rounded-xl">
+                <div className="flex">
+                  <div className="flex-shrink-0">⚠️</div>
+                  <div className="ml-3">
+                    <p className="text-sm">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {success && (
+              <div className="bg-green-50/90 border-l-4 border-green-500 text-green-700 p-4 rounded-xl">
+                <div className="flex">
+                  <div className="flex-shrink-0">✅</div>
+                  <div className="ml-3">
+                    <p className="text-sm">{success}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex gap-4 pt-6">
+              <Link href="/perfil" className="w-1/2">
+                <button 
+                  type="button" 
+                  className="w-full py-3 px-4 rounded-xl text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                >
+                  Cancelar
+                </button>
+              </Link>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="w-1/2 py-3 px-4 rounded-xl text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:from-gray-400 disabled:to-gray-500 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               >
-                Cancelar
+                {isSaving ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Guardando...
+                  </span>
+                ) : (
+                  'Guardar Cambios'
+                )}
               </button>
-            </Link>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="w-1/2 py-3 px-4 rounded-md text-white bg-black hover:bg-gray-800 disabled:bg-gray-400 transition-colors duration-300"
-            >
-              {isSaving ? 'Guardando...' : 'Guardar Cambios'}
-            </button>
-          </div>
-        </form>
+            </div>
+          </form>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }

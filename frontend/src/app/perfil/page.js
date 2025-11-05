@@ -61,77 +61,103 @@ export default function PerfilPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-white p-8">
-        <div className="text-xl font-medium text-gray-900">Cargando perfil...</div>
-      </main>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg text-center">
+          <div className="animate-pulse text-gray-600">Cargando perfil...</div>
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-white p-8">
-        <div className="text-center text-gray-900">
-          <p>{error}</p>
-          <Link href="/login" className="text-black hover:underline mt-4 block">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-8 relative overflow-hidden">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg text-center">
+          <p className="text-gray-700 mb-4">{error}</p>
+          <Link href="/login" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
             Ir a Iniciar Sesión
           </Link>
         </div>
-      </main>
+      </div>
     );
   }
 
   if (user) {
     return (
-      <main className="min-h-screen bg-white p-8">
-        <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md p-8 border border-gray-200">
-          <h1 className="text-4xl font-bold mb-6 text-gray-900">
-            Mi Perfil
-          </h1>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nombre</label>
-              <p className="text-lg font-semibold text-gray-900 mt-1">{user.nombre}</p>
-            </div>
-            <hr className="border-gray-300" />
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-              <p className="text-lg text-gray-900 mt-1">{user.email}</p>
-            </div>
-            <hr className="border-gray-300" />
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Teléfono</label>
-              <p className="text-lg text-gray-900 mt-1">
-                {user.telefono ? user.telefono : 'No especificado'}
-              </p>
-            </div>
-            <hr className="border-gray-300" />
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Rol</label>
-              <p className={`text-lg font-semibold mt-1 ${
-                user.rol === 'Admin' ? 'text-red-600' : 'text-blue-600'
-              }`}>
-                {user.rol}
-                {user.rol === 'Admin' && ' ⭐'}
-              </p>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-8 relative overflow-hidden">
+        {/* Burbujas de fondo */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full opacity-20 animate-float-slow"
+              style={{
+                width: Math.random() * 60 + 30 + 'px',
+                height: Math.random() * 60 + 30 + 'px',
+                left: Math.random() * 100 + '%',
+                top: Math.random() * 100 + '%',
+                background: `linear-gradient(45deg, 
+                  ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
+                  ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
+                animationDelay: Math.random() * 10 + 's',
+                animationDuration: Math.random() * 20 + 20 + 's'
+              }}
+            />
+          ))}
+        </div>
 
-          <div className="mt-8 pt-6 border-t border-gray-300">
-            <Link href="/perfil/editar">
-              <button className="w-full py-3 px-4 rounded-md text-white bg-black hover:bg-gray-800 transition-colors duration-300 mb-4">
-                Editar Perfil
-              </button>
-            </Link>
+        <div className="max-w-xl mx-auto relative z-10">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-8">
+            <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Mi Perfil
+            </h1>
+            <p className="text-gray-600 mb-6">Información de tu cuenta</p>
+            
+            <div className="space-y-6">
+              <div className="p-4 bg-blue-50/80 rounded-xl">
+                <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                <p className="text-lg font-semibold text-gray-900 mt-1">{user.nombre}</p>
+              </div>
 
-            <Link href="/">
-              <button className="w-full py-3 px-4 rounded-md text-white bg-black hover:bg-gray-800 transition-colors duration-300">
-                Volver al Inicio
-              </button>
-            </Link>
+              <div className="p-4 bg-blue-50/80 rounded-xl">
+                <label className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                <p className="text-lg text-gray-900 mt-1">{user.email}</p>
+              </div>
+
+              <div className="p-4 bg-blue-50/80 rounded-xl">
+                <label className="block text-sm font-medium text-gray-700">Teléfono</label>
+                <p className="text-lg text-gray-900 mt-1">
+                  {user.telefono ? user.telefono : 'No especificado'}
+                </p>
+              </div>
+
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+                <label className="block text-sm font-medium text-gray-700">Rol</label>
+                <p className={`text-lg font-semibold mt-1 ${
+                  user.rol === 'Admin' ? 'text-red-600' : 'text-blue-600'
+                }`}>
+                  {user.rol}
+                  {user.rol === 'Admin' && ' ⭐'}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-gray-300 space-y-4">
+              <Link href="/perfil/editar">
+                <button className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                  Editar Perfil
+                </button>
+              </Link>
+
+              <Link href="/">
+                <button className="w-full py-3 px-4 rounded-xl text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                  Volver al Inicio
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
-      </main>
+      </div>
     );
   }
 
