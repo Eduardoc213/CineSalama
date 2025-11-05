@@ -73,44 +73,42 @@ export default function ReservasPage() {
     return (reservas || []).filter(r => String(r.usuarioId) === String(currentUser.id));
   }, [reservas, isAdmin, currentUser]);
 
-const handleCreate = async (payload) => {
-  if (!currentUser) {
-    setErrorUI('Debes iniciar sesión para hacer reservas.');
-    return;
-  }
-
-  const asientoId = Number(payload.asientoId);
-  if (!asientoId) {
-    setErrorUI('Asiento inválido.');
-    return;
-  }
-
-  try {
-    setErrorUI(null);
-    setSuccessUI(null);
-    setLoading(true);
-
-    // Llamamos al endpoint de crear reserva que ahora valida y reserva el asiento en una transacción.
-    const newRes = await api.createReserva(payload);
-    setSuccessUI('Reserva creada correctamente.');
-    setShowForm(false);
-    await load();
-  } catch (err) {
-    console.error('createReserva error:', err);
-    // manejar conflicto (409) cuando asiento ya ocupado
-    if (err?.status === 409) {
-      setErrorUI('No fue posible crear la reserva: el asiento ya está ocupado.');
-    } else {
-      setErrorUI(err?.body?.message || err?.message || 'No se pudo crear la reserva.');
+  const handleCreate = async (payload) => {
+    if (!currentUser) {
+      setErrorUI('Debes iniciar sesión para hacer reservas.');
+      return;
     }
-    await load();
-  } finally {
-    setLoading(false);
-    setTimeout(() => { setErrorUI(null); setSuccessUI(null); }, 6000);
-  }
-};
 
+    const asientoId = Number(payload.asientoId);
+    if (!asientoId) {
+      setErrorUI('Asiento inválido.');
+      return;
+    }
 
+    try {
+      setErrorUI(null);
+      setSuccessUI(null);
+      setLoading(true);
+
+      // Llamamos al endpoint de crear reserva que ahora valida y reserva el asiento en una transacción.
+      const newRes = await api.createReserva(payload);
+      setSuccessUI('Reserva creada correctamente.');
+      setShowForm(false);
+      await load();
+    } catch (err) {
+      console.error('createReserva error:', err);
+      // manejar conflicto (409) cuando asiento ya ocupado
+      if (err?.status === 409) {
+        setErrorUI('No fue posible crear la reserva: el asiento ya está ocupado.');
+      } else {
+        setErrorUI(err?.body?.message || err?.message || 'No se pudo crear la reserva.');
+      }
+      await load();
+    } finally {
+      setLoading(false);
+      setTimeout(() => { setErrorUI(null); setSuccessUI(null); }, 6000);
+    }
+  };
 
   const handleMarkPaid = async (id) => {
     try {
@@ -160,6 +158,14 @@ const handleCreate = async (payload) => {
     } finally {
       setTimeout(() => { setErrorUI(null); setSuccessUI(null); }, 6000);
     }
+  };
+
+  const handlePaymentSuccess = async (reservaId) => {
+    console.log('Pago exitoso para reserva:', reservaId);
+    // Esperar un segundo y luego recargar
+    setTimeout(() => {
+      load();
+    }, 1000);
   };
 
   if (!currentUser) {

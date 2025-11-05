@@ -1,5 +1,6 @@
 const paypalClient = require('../config/paypal.config');
 const paypalSDK = require('@paypal/checkout-server-sdk');
+const db = require('../models'); // Asegúrate de que la ruta sea correcta
 
 // Crear orden de pago
 exports.createOrder = async (req, res) => {
@@ -54,15 +55,25 @@ exports.captureOrder = async (req, res) => {
 
     const response = await paypalClient.execute(request);
 
+    console.log('PayPal Response:', response.result.status);
+
     if (response.result.status === 'COMPLETED') {
-      // TODO: Actualizar reserva a pagado usando tu método correcto
+      // Actualizar reserva a pagado
+      const [updated] = await db.Reserva.update(
+        { estado: 'pagado' },
+        { where: { id: reservaId } }
+      );
+
+      console.log('Reserva actualizada:', updated);
+
       res.json({
         success: true,
         message: 'Pago procesado correctamente',
         orderId: orderID,
+        updated: updated
       });
     } else {
-      res.status(400).json({ message: 'Pago no completado' });
+      res.status(400).json({ message: 'Pago no completado', status: response.result.status });
     }
   } catch (error) {
     console.error('Error capturando pago:', error);
