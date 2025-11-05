@@ -65,6 +65,10 @@ require('./app/routes/historial_puntos.routes')(app);
 require('./app/routes/tarjetas_lealtad.routes')(app);
 require('./app/routes/redemptions.routes')(app);
 
+// Integración de PayPal
+require('./app/routes/pagos.routes')(app);
+require('./app/routes/paypal.routes')(app);
+
 
 db.sequelize.sync({ force: false })
   .then(() => {

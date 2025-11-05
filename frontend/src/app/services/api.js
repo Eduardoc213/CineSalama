@@ -47,6 +47,10 @@ export const createReserva = (data) => request(`${BASE}/reservas`, { method: "PO
 export const updateReserva = (id, data) => request(`${BASE}/reservas/${id}`, { method: "PUT", body: JSON.stringify(data) });
 export const deleteReserva = (id) => request(`${BASE}/reservas/${id}`, { method: "DELETE" });
 
+// funciones para pagar con PayPal
+export const createPayPalOrder = (data) => request(`${BASE}/paypal/create-order`, { method: "POST", body: JSON.stringify(data) });
+export const capturePayPalOrder = (data) => request(`${BASE}/paypal/capture-order`, { method: "POST", body: JSON.stringify(data) });
+
 const api = {
   // asientos
   getAsientos, getAsiento, getAsientosBySala, createAsiento, updateAsiento, deleteAsiento,
@@ -59,7 +63,10 @@ const api = {
   // funciones
   getFunciones, getFuncion, createFuncion, updateFuncion, deleteFuncion,
   // reservas
-  getReservas, getReserva, createReserva, updateReserva, deleteReserva
+  getReservas, getReserva, createReserva, updateReserva, deleteReserva,
+  
+  // PayPal
+  createPayPalOrder, capturePayPalOrder
 };
 
 export default api;

@@ -2,11 +2,10 @@ const db = require('../models');
 const { sendSuccess, sendError } = require('../utils/responseHandler.util.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-// --- NUEVO IMPORT ---
-// Asegúrate de haber creado este archivo 'mailer.util.js' que te di antes
+
 const { sendResetEmail } = require('../utils/mailer.util.js'); 
 
-// --- TU FUNCIÓN DE LOGIN (INTACTA) ---
+
 exports.login = async (req, res) => {
   console.log('📨 Petición de login recibida:', req.body.email);
   
@@ -58,7 +57,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// --- FUNCIÓN NUEVA: SOLICITAR RESETEO ---
+
 exports.forgotPassword = async (req, res) => {
   console.log('📨 Petición de forgot-password recibida:', req.body.email);
   try {
@@ -99,7 +98,7 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// --- FUNCIÓN NUEVA: REALIZAR EL RESETEO ---
+
 exports.resetPassword = async (req, res) => {
   console.log('📨 Petición de reset-password recibida.');
   try {

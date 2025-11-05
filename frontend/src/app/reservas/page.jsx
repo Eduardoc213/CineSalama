@@ -184,6 +184,12 @@ const handleCreate = async (payload) => {
           </div>
           <div className="flex gap-3 items-center">
             <button 
+              onClick={() => router.push('/')} 
+              className="bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700 transition-colors"
+            >
+              Ir al Inicio
+            </button>
+            <button 
               onClick={() => setShowForm(s => !s)} 
               className="bg-black text-white px-4 py-2 rounded-lg shadow hover:bg-gray-800 transition-colors"
             >
@@ -231,13 +237,14 @@ const handleCreate = async (payload) => {
                 {isAdmin ? 'No hay reservas en el sistema.' : 'No tienes reservas. ¡Haz tu primera reserva!'}
               </div>
             )}
-            {visibleReservas.map(r => (
+            {visibleReservas.map((reserva) => (
               <ReservaCard
-                key={r.id}
-                reserva={r}
+                key={reserva.id}
+                reserva={reserva}
                 onMarkPaid={handleMarkPaid}
                 onCancel={handleCancel}
                 onDelete={handleDelete}
+                onPaymentSuccess={() => load()}
               />
             ))}
           </div>
