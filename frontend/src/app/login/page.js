@@ -34,7 +34,7 @@ export default function LoginPage() {
       if (res.ok && data.success) {
         const userInfo = data.data;
         const token = userInfo.token;
-        const userRole = userInfo.rol;
+        const userRole = (userInfo.rol || userInfo.role || '').toString().toLowerCase();
 
         // Limpiar y guardar en localStorage
         localStorage.clear();
@@ -43,14 +43,18 @@ export default function LoginPage() {
           id: userInfo.id, 
           nombre: userInfo.nombre,
           email: userInfo.email,
-          rol: userRole
+          rol: userInfo.rol || userRole
         }));
         localStorage.setItem('userRole', userRole);
         localStorage.setItem('userEmail', userInfo.email);
 
-        // Redirigir a página principal
-        router.push('/');
-
+          // REDIRECCIÓN POR ROL
+      if (userRole === 'admin' || userRole === 'administrator' || userRole === 'adm') {
+        router.push('/admin');   // nueva pagina admin
+        } else {
+        router.push('/');        // cliente normal
+               }
+               
       } else {
         setError(data.message || 'Error en las credenciales.');
       }
