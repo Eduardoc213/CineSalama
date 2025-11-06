@@ -47,6 +47,8 @@ exports.createOrder = async (req, res) => {
       application_context: {
         return_url: returnUrl,
         cancel_url: cancelUrl,
+        brand_name: 'CineSalama',
+        user_action: 'PAY_NOW',
       },
     });
 
@@ -79,7 +81,9 @@ exports.captureOrder = async (req, res) => {
 
     const response = await paypalClient.execute(request);
 
-    console.log('PayPal Response:', response.result.status);
+    console.log('PayPal Response Status:', response.result.status);
+    console.log('Tipo de pago:', type);
+    console.log('Reserva ID:', reservaId);
 
     if (response.result.status === 'COMPLETED') {
       // Solo actualizar reserva si es tipo reserva
@@ -89,18 +93,30 @@ exports.captureOrder = async (req, res) => {
           { where: { id: reservaId } }
         );
         console.log('Reserva actualizada:', updated);
+        
+        if (updated === 0) {
+          console.warn('No se encontró la reserva con ID:', reservaId);
+        }
       }
 
       res.json({
         success: true,
         message: 'Pago procesado correctamente',
         orderId: orderID,
+        type: type,
+        reservaId: reservaId
       });
     } else {
-      res.status(400).json({ message: 'Pago no completado', status: response.result.status });
+      res.status(400).json({ 
+        message: 'Pago no completado', 
+        status: response.result.status 
+      });
     }
   } catch (error) {
     console.error('Error capturando pago:', error);
-    res.status(500).json({ message: 'Error procesando pago', error: error.message });
+    res.status(500).json({ 
+      message: 'Error procesando pago', 
+      error: error.message 
+    });
   }
 };

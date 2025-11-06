@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
-import { createPayPalOrder, capturePayPalOrder } from '../../services/api';
+import { createPayPalOrder, capturePayPalOrder } from '../../services/api'; // Ruta corregida
 
 export default function PayPalButton({ reservaId, amount, onSuccess, onError }) {
   const [loaded, setLoaded] = useState(false);
@@ -26,7 +26,7 @@ export default function PayPalButton({ reservaId, amount, onSuccess, onError }) 
     scriptLoaded.current = true;
 
     const script = document.createElement('script');
-    script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}`;
+    script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD`;
     script.async = true;
     script.onload = () => {
       setLoaded(true);
@@ -40,14 +40,14 @@ export default function PayPalButton({ reservaId, amount, onSuccess, onError }) 
     document.body.appendChild(script);
 
     return () => {
-      // No remover el script para evitar recargas
+      // Cleanup si es necesario
     };
   }, []);
 
   const initPayPal = () => {
     if (buttonsRendered.current) return;
 
-    const container = document.getElementById('paypal-button-container');
+    const container = document.getElementById(`paypal-button-container-${reservaId}`);
     if (!container) {
       console.error('Contenedor PayPal no encontrado');
       return;
@@ -61,37 +61,48 @@ export default function PayPalButton({ reservaId, amount, onSuccess, onError }) 
     buttonsRendered.current = true;
 
     window.paypal.Buttons({
-      createOrder: async () => {
+      createOrder: async (data, actions) => {
         try {
+          console.log('Creando orden PayPal para reserva:', reservaId, 'Monto:', amount);
           const response = await createPayPalOrder({
-            reservaId,
-            amount,
+            reservaId: reservaId,
+            amount: amount,
+            type: 'reserva'
           });
+          console.log('Orden creada con ID:', response.id);
           return response.id;
         } catch (error) {
-          console.error('Error creando orden:', error);
+          console.error('Error creando orden PayPal:', error);
+          onError?.(error.message || 'Error creando orden de pago');
           throw error;
         }
       },
-      onApprove: async (data) => {
+      onApprove: async (data, actions) => {
         try {
+          console.log('Capturando pago PayPal, orderID:', data.orderID);
           const response = await capturePayPalOrder({
             orderID: data.orderID,
-            reservaId,
+            reservaId: reservaId,
+            type: 'reserva'
           });
-          buttonsRendered.current = false;
+          console.log('Pago capturado exitosamente:', response);
           onSuccess?.(response);
         } catch (error) {
-          console.error('Error capturando pago:', error);
+          console.error('Error capturando pago PayPal:', error);
+          onError?.(error.message || 'Error procesando pago');
           throw error;
         }
       },
       onError: (err) => {
-        console.error('Error PayPal:', err);
-        onError?.(err);
+        console.error('Error en botón PayPal:', err);
+        onError?.(err.toString());
       },
-    }).render('#paypal-button-container');
+      onCancel: (data) => {
+        console.log('Pago cancelado por el usuario:', data);
+        onError?.('Pago cancelado');
+      }
+    }).render(`#paypal-button-container-${reservaId}`);
   };
 
-  return <div id="paypal-button-container"></div>;
+  return <div id={`paypal-button-container-${reservaId}`}></div>;
 }
