@@ -34,7 +34,12 @@ export default function LoginPage() {
       if (res.ok && data.success) {
         const userInfo = data.data;
         const token = userInfo.token;
+        
+        // NORMALIZAR EL ROL - CORRECCIÓN PRINCIPAL
         const userRole = (userInfo.rol || userInfo.role || '').toString().toLowerCase();
+        const normalizedRole = userRole === 'admin' || userRole === 'administrator' || userRole === 'adm' 
+          ? 'Admin' 
+          : 'User';
 
         // Limpiar y guardar en localStorage
         localStorage.clear();
@@ -43,13 +48,16 @@ export default function LoginPage() {
           id: userInfo.id, 
           nombre: userInfo.nombre,
           email: userInfo.email,
-          rol: userInfo.rol || userRole
+          rol: normalizedRole // Usar rol normalizado
         }));
-        localStorage.setItem('userRole', userRole);
+        localStorage.setItem('userRole', normalizedRole); // Guardar como 'Admin' o 'User'
         localStorage.setItem('userEmail', userInfo.email);
 
+        console.log('✅ Login exitoso - Rol:', normalizedRole);
+        console.log('✅ User data:', JSON.parse(localStorage.getItem('user')));
+
         // REDIRECCIÓN POR ROL
-        if (userRole === 'admin' || userRole === 'administrator' || userRole === 'adm') {
+        if (normalizedRole === 'Admin') {
           router.push('/admin');
         } else {
           router.push('/');
