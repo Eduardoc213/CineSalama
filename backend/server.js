@@ -68,8 +68,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ MANEJO ESPECÍFICO PARA OPTIONS (PREFLIGHT)
-app.options('*', cors(corsOptions));
+
+app.options('/*', cors(corsOptions));
 
 app.get('/', (req, res) => {
   console.log('✅ Ruta raíz accedida desde:', req.headers.origin);
