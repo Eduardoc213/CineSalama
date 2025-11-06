@@ -4,6 +4,8 @@ import { api } from "../../services/api";
 import SeatMap from "../../asientos/components/SeatMap";
 import ErrorBox from "../../components/ErrorBox";
 
+const SEAT_PRICE_Q = 40; // precio fijo en quetzales
+
 export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave, currentUserId = null }) {
   const [funciones, setFunciones] = useState([]);
   const [asientos, setAsientos] = useState([]); // todos los asientos de la sala
@@ -149,7 +151,7 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
               <select value={selectedSeat} onChange={e => setSelectedSeat(e.target.value)} className="w-full border rounded px-3 py-2">
                 <option value="">-- Selecciona asiento --</option>
                 {asientosDisponibles.map(a => (
-                  <option key={a.id} value={a.id}>{a.fila}{a.numero} ({a.tipo || "normal"})</option>
+                  <option key={a.id} value={a.id}>{a.fila}{a.numero} ({a.tipo || "normal"})  — Q{SEAT_PRICE_Q}</option>
                 ))}
               </select>
             )}
@@ -171,7 +173,7 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
               </div>
             ) : (
               // ahora pasamos TODOS los asientos para que el mapa muestre ocupados
-              <SeatMap seats={asientos} onSeatClick={handleSeatClickForSelection} />
+              <SeatMap seats={asientos.map(s => ({ ...s, priceQ: SEAT_PRICE_Q }))} onSeatClick={handleSeatClickForSelection} />
             )}
           </div>
 
@@ -179,7 +181,7 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
             <label className="block text-sm font-medium mb-1">Asiento seleccionado</label>
             <div className="w-full border border-gray-300 rounded px-3 py-2 bg-gray-50">
               {selectedSeat ? 
-                `Asiento seleccionado (ID: ${selectedSeat})` : 
+                `Asiento seleccionado (ID: ${selectedSeat}) — Q${SEAT_PRICE_Q}` : 
                 'Ningún asiento seleccionado'
               }
             </div>
@@ -199,7 +201,7 @@ export default function ReservaForm({ initial = {}, onCancel = () => {}, onSave,
           type="submit" 
           className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
         >
-          Confirmar Reserva
+          Confirmar Reserva — Q{SEAT_PRICE_Q}
         </button>
       </div>
     </form>

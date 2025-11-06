@@ -4,47 +4,30 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const ENTITIES = [
-  'asientos','estrenos','facturas','funciones','historial_puntos',
-  'pagos','peliculas','promos','redemptions','reservas','salas',
-  'snacks','tarjetas_lealtad','usuarios','venta_items','ventas'
+  'asientos','estrenos','funciones','peliculas','promos','reservas','salas',
+  'snacks',
 ];
 
 const ENTITY_NAMES = {
   asientos: 'Asientos',
   estrenos: 'Estrenos',
-  facturas: 'Facturas',
   funciones: 'Funciones',
-  historial_puntos: 'Historial de Puntos',
-  pagos: 'Pagos',
   peliculas: 'Películas',
   promos: 'Promociones',
-  redemptions: 'Redenciones',
   reservas: 'Reservas',
   salas: 'Salas',
   snacks: 'Snacks',
-  tarjetas_lealtad: 'Tarjetas de Lealtad',
-  usuarios: 'Usuarios',
-  venta_items: 'Items de Venta',
-  ventas: 'Ventas'
 };
 
 const ENTITY_ICONS = {
   asientos: '💺',
   estrenos: '🎬',
-  facturas: '🧾',
   funciones: '🎭',
-  historial_puntos: '⭐',
-  pagos: '💳',
   peliculas: '🎞️',
   promos: '🎁',
-  redemptions: '🔄',
   reservas: '🎫',
   salas: '🏢',
   snacks: '🍿',
-  tarjetas_lealtad: '💎',
-  usuarios: '👥',
-  venta_items: '🛒',
-  ventas: '💰'
 };
 
 export default function AdminPage() {
@@ -232,11 +215,6 @@ export default function AdminPage() {
               </h2>
               
               <div className="flex flex-wrap gap-3">
-                <Link href="/usuarios">
-                  <button className="px-4 py-2 bg-white text-gray-700 rounded-xl hover:bg-gray-50 transition-all shadow-sm hover:shadow-md border border-gray-300 flex items-center gap-2">
-                    <span>👥</span> Usuarios
-                  </button>
-                </Link>
                 
                 <Link href="/reservas">
                   <button className="px-4 py-2 bg-white text-gray-700 rounded-xl hover:bg-gray-50 transition-all shadow-sm hover:shadow-md border border-gray-300 flex items-center gap-2">

@@ -46,10 +46,23 @@ export default function PaginaPrincipal() {
     const userData = localStorage.getItem('user');
 
     if (token && userData) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(userData));
+       try {
+        const parsed = JSON.parse(userData);
+        setIsLoggedIn(true);
+        setUser(parsed);
+      } catch {
+        setIsLoggedIn(false);
+        setUser(null);
+      }
     }
   }, []);
+
+    // determinar si es admin (case-insensitive). Si no hay user, false.
+  const isAdmin = useMemo(() => {
+    if (!user) return false;
+    const rol = String(user.rol || user.role || '').toLowerCase();
+    return rol === 'admin';
+  }, [user]);
 
   // ✅ ESTILOS FIJOS PARA BURBUJAS - SIN Math.random()
   const bubbleStyles = useMemo(() => [
@@ -324,6 +337,23 @@ export default function PaginaPrincipal() {
                 </Link>
               )}
 
+              {/* BOTÓN ADMIN: habilitado solo para admin, bloqueado para clientes */}
+              <button
+                onClick={() => { if (isAdmin) router.push('/admin'); }}
+                disabled={!isAdmin}
+                aria-disabled={!isAdmin}
+                title={isAdmin ? "Ir al panel de administrador" : "Requiere permisos de administrador"}
+                className={[
+                  "px-4 py-2 rounded-lg text-sm transition-all shadow-sm",
+                  isAdmin
+                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                    : "bg-white border border-gray-200 text-gray-400 cursor-not-allowed opacity-80"
+                ].join(" ")}
+                style={{ marginLeft: 4 }}
+              >
+                Administrador
+              </button>
+
               <Link href="/reservas">
                 <button className="px-4 py-2 rounded-lg border border-black text-sm hover:bg-black hover:text-white transition-all shadow-sm hover:shadow-md">
                   Reservar
@@ -369,15 +399,6 @@ export default function PaginaPrincipal() {
                     </Link>
                   )}
 
-                  <div className="hidden sm:block">
-                    <div className="relative">
-                      <input
-                        type="search"
-                        placeholder="Buscar"
-                        className="border rounded-full px-4 py-2 w-64 text-sm bg-white/80 backdrop-blur-sm shadow-sm focus:shadow-md focus:ring-2 focus:ring-blue-500 transition-all"
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <div className="mb-8 bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">

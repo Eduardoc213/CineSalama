@@ -69,7 +69,7 @@ export default function SeatMap({ seats = [], salaInfo = null, onSeatClick = () 
                       }
                       onSeatClick(seat);
                     }}
-                    title={`${seat.fila}${seat.numero} — ${seat.tipo || "Normal"} — ${seat.estado || "disponible"}`}
+                    title={`${seat.fila}${seat.numero} — ${seat.tipo || "Normal"} — ${seat.estado || "disponible"} — Q${seat.priceQ ?? 40}`}
                     disabled={ocupado}
                     aria-disabled={ocupado}
                     className={[
