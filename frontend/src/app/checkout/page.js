@@ -5,21 +5,25 @@ import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PayPalButton from './components/PayPalButton';
 
 export default function CheckoutPage() {
   const { cart, getTotal, clearCart } = useCart();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handlePayPalPayment = async () => {
-    setIsProcessing(true);
-    
-    // Simulación de pago con PayPal
-    setTimeout(() => {
-      alert('¡Pago exitoso con PayPal!');
-      clearCart();
-      router.push('/');
-    }, 2000);
+  const handlePaymentSuccess = (response) => {
+    setIsProcessing(false);
+    alert('¡Pago exitoso!');
+    clearCart();
+    router.push('/');
+  };
+
+  const handlePaymentError = (err) => {
+    setIsProcessing(false);
+    setError('Error en el pago. Intenta nuevamente.');
+    console.error('Error de pago:', err);
   };
 
   if (cart.length === 0) {
@@ -41,6 +45,12 @@ export default function CheckoutPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Checkout</h1>
         
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
         <div className="grid md:grid-cols-2 gap-8">
           {/* Resumen del Pedido */}
           <div>
@@ -69,23 +79,12 @@ export default function CheckoutPage() {
             <h2 className="text-xl font-semibold mb-4">Método de Pago</h2>
             
             <div className="border rounded-lg p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-yellow-100 rounded flex items-center justify-center">
-                  <span className="text-lg">P</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold">PayPal</h3>
-                  <p className="text-sm text-gray-600">Paga de forma segura con PayPal</p>
-                </div>
-              </div>
-
-              <button
-                onClick={handlePayPalPayment}
-                disabled={isProcessing}
-                className="w-full bg-yellow-400 text-black py-3 rounded font-semibold hover:bg-yellow-500 disabled:bg-gray-400"
-              >
-                {isProcessing ? 'Procesando...' : 'Pagar con PayPal'}
-              </button>
+              <PayPalButton 
+                cartItems={cart}
+                amount={getTotal()}
+                onSuccess={handlePaymentSuccess}
+                onError={handlePaymentError}
+              />
               
               <p className="text-xs text-gray-500 mt-3 text-center">
                 Serás redirigido a PayPal para completar tu pago de forma segura
