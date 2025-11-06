@@ -104,6 +104,11 @@ export default function PromosPage() {
     return true;
   };
 
+  // Función para calcular precio con descuento
+  const calcularPrecioConDescuento = (precio, descuento) => {
+    return precio * (1 - descuento / 100);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-8 relative overflow-hidden">
@@ -210,6 +215,7 @@ export default function PromosPage() {
           {promos.map((promo) => {
             const isActive = isPromoActive(promo);
             const cartQuantity = getItemQuantity(promo.id, 'promo');
+            const precioConDescuento = calcularPrecioConDescuento(promo.precio, promo.descuento);
             
             return (
               <div key={promo.id} className="bg-white/90 backdrop-blur-sm border border-white/30 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 p-6 group">
@@ -236,12 +242,15 @@ export default function PromosPage() {
                     <span className="font-bold text-orange-600 text-lg">{promo.descuento}%</span>
                   </div>
                   
-                  {promo.puntos_necesarios > 0 && (
-                    <div className="flex justify-between items-center p-3 bg-blue-50/80 rounded-xl">
-                      <span className="text-gray-600">Puntos necesarios:</span>
-                      <span className="font-semibold text-blue-600">{promo.puntos_necesarios}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between items-center p-3 bg-blue-50/80 rounded-xl">
+                    <span className="text-gray-600">Precio original:</span>
+                    <span className="font-semibold text-blue-600 line-through">Q{promo.precio}</span>
+                  </div>
+
+                  <div className="flex justify-between items-center p-3 bg-green-50/80 rounded-xl">
+                    <span className="text-gray-600">Precio con descuento:</span>
+                    <span className="font-semibold text-green-600">Q{precioConDescuento.toFixed(2)}</span>
+                  </div>
                   
                   {promo.fecha_expiracion && (
                     <div className="flex justify-between items-center p-3 bg-purple-50/80 rounded-xl">
@@ -255,7 +264,7 @@ export default function PromosPage() {
 
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                    {promo.puntos_necesarios > 0 ? `${promo.puntos_necesarios} pts` : 'Gratis'}
+                    Q{precioConDescuento.toFixed(2)}
                   </span>
                   
                   {cartQuantity > 0 && (

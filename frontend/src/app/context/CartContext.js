@@ -8,7 +8,6 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
 
-  // Cargar carrito desde localStorage al iniciar
   useEffect(() => {
     const savedCart = localStorage.getItem('cineha-cart');
     if (savedCart) {
@@ -16,7 +15,6 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  // Guardar carrito en localStorage cuando cambie
   useEffect(() => {
     localStorage.setItem('cineha-cart', JSON.stringify(cart));
   }, [cart]);
@@ -34,11 +32,19 @@ export function CartProvider({ children }) {
             : cartItem
         );
       } else {
+        // Para promociones, calcular el precio con descuento
+        let finalPrice = item.precio || 0;
+        if (type === 'promo' && item.descuento) {
+          finalPrice = item.precio * (1 - item.descuento / 100);
+        }
+        
         return [...prevCart, { 
           ...item, 
           type, 
           quantity: 1,
-          price: type === 'snack' ? item.precio : 0 // Las promos son gratis
+          price: finalPrice,
+          precio_original: item.precio || 0, // Guardar precio original para mostrar
+          descuento: item.descuento || 0 // Guardar descuento para mostrar
         }];
       }
     });

@@ -9,7 +9,7 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <main className="min-h-screen bg-white p-8">
+      <div className="min-h-screen bg-white p-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Tu Carrito</h1>
           <div className="text-center py-12 bg-gray-50 rounded-lg">
@@ -24,12 +24,12 @@ export default function CartPage() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-white p-8">
+    <div className="min-h-screen bg-white p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Tu Carrito</h1>
@@ -42,59 +42,79 @@ export default function CartPage() {
         </div>
         
         <div className="space-y-4 mb-8">
-          {cart.map((item) => (
-            <div key={`${item.type}-${item.id}`} className="flex items-center justify-between p-6 border rounded-lg bg-white shadow-sm">
-              <div className="flex-1">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
-                    <span className="text-2xl">
-                      {item.type === 'snack' ? '🍿' : '🎁'}
-                    </span>
+          {cart.map((item) => {
+            const itemPrice = item.price || 0;
+            const precioOriginal = item.precio_original || item.precio || 0;
+            const tieneDescuento = item.descuento && item.descuento > 0;
+            
+            return (
+              <div key={`${item.type}-${item.id}`} className="flex items-center justify-between p-6 border rounded-lg bg-white shadow-sm">
+                <div className="flex-1">
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
+                      <span className="text-2xl">
+                        {item.type === 'snack' ? '🍿' : '🎁'}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{item.nombre}</h3>
+                      <p className="text-gray-600 text-sm">
+                        {item.type === 'snack' ? 'Snack' : 'Promoción'}
+                      </p>
+                      {tieneDescuento && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-sm text-gray-500 line-through">Q{precioOriginal}</span>
+                          <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
+                            {item.descuento}% OFF
+                          </span>
+                        </div>
+                      )}
+                      {item.descripcion && (
+                        <p className="text-gray-500 text-sm mt-1">{item.descripcion}</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">{item.nombre}</h3>
-                    <p className="text-gray-600 text-sm">
-                      {item.type === 'snack' ? 'Snack' : 'Promoción'} • 
-                      {item.type === 'snack' ? ` Q${item.precio}` : ' Gratis'}
-                    </p>
-                    {item.descripcion && (
-                      <p className="text-gray-500 text-sm mt-1">{item.descripcion}</p>
+                </div>
+                
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.type, item.quantity - 1)}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"
+                    >
+                      <span className="text-lg">-</span>
+                    </button>
+                    <span className="w-8 text-center font-semibold text-lg">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.type, item.quantity + 1)}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"
+                    >
+                      <span className="text-lg">+</span>
+                    </button>
+                  </div>
+                  
+                  <div className="text-right">
+                    <span className="font-semibold text-lg block">
+                      Q{(itemPrice * item.quantity).toFixed(2)}
+                    </span>
+                    {item.quantity > 1 && (
+                      <span className="text-sm text-gray-500">
+                        Q{itemPrice} c/u
+                      </span>
                     )}
                   </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-3">
+                  
                   <button
-                    onClick={() => updateQuantity(item.id, item.type, item.quantity - 1)}
-                    className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"
+                    onClick={() => removeFromCart(item.id, item.type)}
+                    className="text-red-500 hover:text-red-700 p-2"
+                    title="Eliminar del carrito"
                   >
-                    <span className="text-lg">-</span>
-                  </button>
-                  <span className="w-8 text-center font-semibold text-lg">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.type, item.quantity + 1)}
-                    className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"
-                  >
-                    <span className="text-lg">+</span>
+                    🗑️
                   </button>
                 </div>
-                
-                <span className="font-semibold text-lg w-24 text-right">
-                  Q{((item.type === 'snack' ? item.precio : 0) * item.quantity).toFixed(2)}
-                </span>
-                
-                <button
-                  onClick={() => removeFromCart(item.id, item.type)}
-                  className="text-red-500 hover:text-red-700 p-2"
-                  title="Eliminar del carrito"
-                >
-                  🗑️
-                </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         
         <div className="bg-gray-50 p-6 rounded-lg border">
@@ -123,6 +143,6 @@ export default function CartPage() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

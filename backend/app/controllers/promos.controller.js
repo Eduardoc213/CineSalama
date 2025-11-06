@@ -29,17 +29,18 @@ exports.findOne = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { nombre, descripcion, descuento, puntos_necesarios, fecha_expiracion, activa } = req.body;
+    const { nombre, descripcion, descuento, precio, fecha_expiracion, activa } = req.body;
     
-    if (!nombre || !descuento) {
-      return res.status(400).json({ success: false, message: "El nombre y descuento son obligatorios." });
+    if (!nombre || !descuento || precio === undefined) {
+      return res.status(400).json({ success: false, message: "El nombre, descuento y precio son obligatorios." });
     }
 
     const promoData = {
       nombre,
       descripcion: descripcion || '',
       descuento: parseFloat(descuento),
-      puntos_necesarios: parseInt(puntos_necesarios) || 0,
+      precio: parseFloat(precio),
+      tipo: 'precio',
       activa: activa !== undefined ? activa : true
     };
 
@@ -57,13 +58,13 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { nombre, descripcion, descuento, puntos_necesarios, fecha_expiracion, activa } = req.body;
+    const { nombre, descripcion, descuento, precio, fecha_expiracion, activa } = req.body;
     
     const updateData = {};
     if (nombre !== undefined) updateData.nombre = nombre;
     if (descripcion !== undefined) updateData.descripcion = descripcion;
     if (descuento !== undefined) updateData.descuento = parseFloat(descuento);
-    if (puntos_necesarios !== undefined) updateData.puntos_necesarios = parseInt(puntos_necesarios);
+    if (precio !== undefined) updateData.precio = parseFloat(precio);
     if (fecha_expiracion !== undefined) updateData.fecha_expiracion = fecha_expiracion ? new Date(fecha_expiracion) : null;
     if (activa !== undefined) updateData.activa = activa;
 

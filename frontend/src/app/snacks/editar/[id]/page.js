@@ -155,7 +155,7 @@ export default function EditarSnackPage() {
 
             <div>
               <label htmlFor="precio" className="block text-sm font-medium text-gray-700 mb-2">
-                Precio *
+                Precio Q *
               </label>
               <input
                 type="number"

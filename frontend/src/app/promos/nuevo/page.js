@@ -1,3 +1,4 @@
+// app/promos/nuevo/page.js
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ export default function NuevaPromoPage() {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [descuento, setDescuento] = useState('');
-  const [puntosNecesarios, setPuntosNecesarios] = useState('0');
+  const [precio, setPrecio] = useState('');
   const [fechaExpiracion, setFechaExpiracion] = useState('');
   const [activa, setActiva] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +42,7 @@ export default function NuevaPromoPage() {
           nombre,
           descripcion,
           descuento: parseFloat(descuento),
-          puntos_necesarios: parseInt(puntosNecesarios),
+          precio: parseFloat(precio),
           fecha_expiracion: fechaExpiracion || null,
           activa,
         }),
@@ -132,17 +133,19 @@ export default function NuevaPromoPage() {
               </div>
 
               <div>
-                <label htmlFor="puntosNecesarios" className="block text-sm font-medium text-gray-700 mb-2">
-                  Puntos Necesarios
+                <label htmlFor="precio" className="block text-sm font-medium text-gray-700 mb-2">
+                  Precio ($) *
                 </label>
                 <input
                   type="number"
-                  id="puntosNecesarios"
-                  value={puntosNecesarios}
-                  onChange={(e) => setPuntosNecesarios(e.target.value)}
+                  id="precio"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
+                  required
+                  step="0.01"
                   min="0"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-black bg-white/80 backdrop-blur-sm transition-all"
-                  placeholder="0"
+                  placeholder="0.00"
                 />
               </div>
             </div>
