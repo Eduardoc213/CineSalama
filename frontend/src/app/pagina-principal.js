@@ -35,6 +35,11 @@ export default function PaginaPrincipal() {
   const [estrenos, setEstrenos] = useState([]);
   const [salasMap, setSalasMap] = useState({});
   const [recomendacionActual, setRecomendacionActual] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -45,6 +50,22 @@ export default function PaginaPrincipal() {
       setUser(JSON.parse(userData));
     }
   }, []);
+
+  // ✅ ESTILOS FIJOS PARA BURBUJAS - SIN Math.random()
+  const bubbleStyles = useMemo(() => [
+    { width: '60px', height: '60px', left: '10%', top: '20%', animationDelay: '0s', animationDuration: '25s' },
+    { width: '80px', height: '80px', left: '80%', top: '40%', animationDelay: '2s', animationDuration: '30s' },
+    { width: '70px', height: '70px', left: '20%', top: '70%', animationDelay: '4s', animationDuration: '28s' },
+    { width: '90px', height: '90px', left: '85%', top: '15%', animationDelay: '1s', animationDuration: '32s' },
+    { width: '50px', height: '50px', left: '5%', top: '50%', animationDelay: '3s', animationDuration: '22s' },
+    { width: '75px', height: '75px', left: '75%', top: '80%', animationDelay: '5s', animationDuration: '26s' },
+    { width: '65px', height: '65px', left: '15%', top: '30%', animationDelay: '6s', animationDuration: '29s' },
+    { width: '85px', height: '85px', left: '90%', top: '60%', animationDelay: '7s', animationDuration: '31s' },
+    { width: '55px', height: '55px', left: '25%', top: '85%', animationDelay: '8s', animationDuration: '24s' },
+    { width: '95px', height: '95px', left: '65%', top: '25%', animationDelay: '9s', animationDuration: '33s' },
+    { width: '45px', height: '45px', left: '35%', top: '10%', animationDelay: '10s', animationDuration: '21s' },
+    { width: '100px', height: '100px', left: '50%', top: '90%', animationDelay: '11s', animationDuration: '35s' }
+  ], []);
 
   const peliculaById = useMemo(() => {
     const m = {};
@@ -202,26 +223,28 @@ export default function PaginaPrincipal() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-black relative overflow-hidden">
-      {/* Burbujas estáticas con rotación suave */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full opacity-20 animate-float-slow"
-            style={{
-              width: Math.random() * 80 + 40 + 'px',
-              height: Math.random() * 80 + 40 + 'px',
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              background: `linear-gradient(45deg, 
-                ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
-                ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
-              animationDelay: Math.random() * 10 + 's',
-              animationDuration: Math.random() * 20 + 20 + 's'
-            }}
-          />
-        ))}
-      </div>
+      {/* ✅ BURBUJAS ESTÁTICAS CORREGIDAS - SIN Math.random() */}
+      {isClient && (
+        <div className="fixed inset-0 pointer-events-none z-0">
+          {bubbleStyles.map((style, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full opacity-20 animate-float-slow"
+              style={{
+                width: style.width,
+                height: style.height,
+                left: style.left,
+                top: style.top,
+                background: `linear-gradient(45deg, 
+                  ${i % 3 === 0 ? '#3b82f6' : i % 3 === 1 ? '#8b5cf6' : '#f59e0b'}, 
+                  ${i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#f59e0b' : '#3b82f6'})`,
+                animationDelay: style.animationDelay,
+                animationDuration: style.animationDuration
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes float-slow {

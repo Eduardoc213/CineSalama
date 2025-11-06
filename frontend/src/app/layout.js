@@ -20,8 +20,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white text-gray-900`}>
+    <html lang="es" suppressHydrationWarning>
+      <body 
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white text-gray-900`}
+        suppressHydrationWarning
+      >
         <CartProvider>
           {children}
         </CartProvider>
