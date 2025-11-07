@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
+// Obtener la URL base desde las variables de entorno
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
 export default function ResetPasswordPage() {
   const router = useRouter();
   const params = useParams();
@@ -26,7 +29,7 @@ export default function ResetPasswordPage() {
     setError(null);
 
     try {
-      const res = await fetch('http://localhost:3000/api/auth/reset-password', {
+      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: token, newPassword: password }),
@@ -44,6 +47,7 @@ export default function ResetPasswordPage() {
       }
     } catch (err) {
       setError('No se pudo conectar al servidor.');
+      console.error('Error:', err);
     } finally {
       setIsLoading(false);
     }
